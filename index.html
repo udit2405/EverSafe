@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send a Message</title>
+
+  <!-- ============================================================
+       STYLES
+  ============================================================ -->
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:   #4f46e5;
+      --primary-h: #4338ca;
+      --success:   #16a34a;
+      --danger:    #dc2626;
+      --bg:        #f8fafc;
+      --card:      #ffffff;
+      --border:    #e2e8f0;
+      --text:      #1e293b;
+      --muted:     #64748b;
+      --radius:    12px;
+      --shadow:    0 4px 24px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -.5px;
+    }
+    .header p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: .95rem;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 620px;
+      padding: 36px 40px;
+    }
+
+    /* ── Form elements ────────────────────────────────────────── */
+    .form-group { margin-bottom: 22px; }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: .875rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    label .required { color: var(--danger); margin-left: 2px; }
+
+    input[type="email"],
+    input[type="datetime-local"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: .95rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color .2s;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+    }
+    textarea { resize: vertical; min-height: 110px; }
+
+    /* ── Message-type tabs ────────────────────────────────────── */
+    .tab-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .tab-btn.active {
+      border-color: var(--primary);
+      background: #ede9fe;
+      color: var(--primary);
+    }
+
+    /* ── Upload area ──────────────────────────────────────────── */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--primary);
+      background: #f5f3ff;
+    }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+    .upload-area p { color: var(--muted); font-size: .875rem; }
+    .upload-area p strong { color: var(--primary); }
+    .file-chosen {
+      margin-top: 10px;
+      font-size: .8rem;
+      color: var(--success);
+      font-weight: 600;
+      display: none;
+    }
+
+    /* ── Recording controls ───────────────────────────────────── */
+    .record-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-record {
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .875rem;
+      transition: background .2s;
+    }
+    .btn-record.start  { background: #fee2e2; color: var(--danger); }
+    .btn-record.stop   { background: #dcfce7; color: var(--success); }
+    .btn-record:disabled { opacity: .5; cursor: not-allowed; }
+    .record-timer {
+      font-size: .875rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    #recordedPreview { margin-top: 12px; width: 100%; border-radius: 8px; display: none; }
+
+    /* ── Progress bar ─────────────────────────────────────────── */
+    .progress-wrap {
+      display: none;
+      margin-top: 14px;
+    }
+    .progress-label {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .progress-bar-bg {
+      height: 8px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 99px;
+      width: 0%;
+      transition: width .3s;
+    }
+
+    /* ── Delivery section ─────────────────────────────────────── */
+    .radio-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: .9rem;
+    }
+    .radio-item input[type="radio"] { accent-color: var(--primary); }
+
+    #scheduledDateWrapper { display: none; margin-top: 14px; }
+
+    /* ── Submit button ────────────────────────────────────────── */
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s, opacity .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--primary-h); }
+    .btn-submit:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* ── Alerts ───────────────────────────────────────────────── */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: .875rem;
+      margin-top: 16px;
+      display: none;
+    }
+    .alert-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* ── Spinner ──────────────────────────────────────────────── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .card { padding: 24px 20px; }
+      .tab-group { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Header ───────────────────────────────────────────────── -->
+  <div class="header">
+    <h1>📬 Send a Message</h1>
+    <p>Leave a video, audio, or text message for someone special.</p>
+  </div>
+
+  <!-- ── Main card ─────────────────────────────────────────────── -->
+  <div class="card">
+    <form id="messageForm" novalidate>
+
+      <!-- 1. Recipient email -->
+      <div class="form-group">
+        <label for="recipientEmail">Recipient Email <span class="required">*</span></label>
+        <input type="email" id="recipientEmail" placeholder="recipient@example.com" required />
+      </div>
+
+      <hr class="divider" />
+
+      <!-- 2. Message type selector -->
+      <div class="form-group">
+        <label>Message Type <span class="required">*</span></label>
+        <div class="tab-group">
+          <button type="button" class="tab-btn active" data-type="video">🎥 Video</button>
+          <button type="button" class="tab-btn" data-type="audio">🎙️ Audio</button>
+          <button type="button" class="tab-btn" data-type="text">✍️ Text</button>
+        </div>
+      </div>
+
+      <!-- 3a. Video panel -->
+      <div id="panel-video" class="message-panel">
+        <!-- Upload -->
+        <div class="form-group">
+          <label>Upload Video File</label>
+          <div class="upload-area" id="videoUploadArea">
+            <input type="file" id="videoFile" accept="video/*" />
+            <div class="upload-icon">🎬</div>
+            <p><strong>Click to choose</strong> or drag & drop a video</p>
+            <p>MP4, MOV, WebM — max 500 MB</p>
+            <div class="file-chosen" id="videoFileChosen">✅ File selected</div>
+          </div>
+        </div>
+        <!-- OR record -->
+        <div class="form-group">
+          <label>Or Record Video</label>
+          <div class="record-controls">
+            <button type="button" class="btn-record start" id="startVideoRecord">⏺ Start Recording</button>
+            <button type="button" class="btn-record stop"  id="stopVideoRecord"  disabled>⏹ Stop</button>
+            <span class="record-timer" id="videoTimer">00:00</span>
+          </div>
+          <video id="recordedPreview" controls></video>
+        </div>
+      </div>
+
+      <!-- 3b. Audio panel -->
+      <div id="panel-audio" class="message-panel" style="display:none">
+        <!-- Upload -->
+        <div class="form-group">
+          <label>Upload Audio File</label>
+          <div class="upload-area" id="audioUploadArea">
+            <input type="file" id="audioFile" accept="audio/*" />
+            <div class="upload-icon">🎵</div>
+            <p><strong>Click to choose</strong> or drag & drop an audio file</p>
+            <p>MP3, WAV, M4A, OGG — max 100 MB</p>
+            <div class="file-chosen" id="audioFileChosen">✅ File selected</div>
+          </div>
+        </div>
+        <!-- OR record -->
+        <div class="form-group">
+          <label>Or Record Audio</label>
+          <div class="record-controls">
+            <button type="button" class="btn-record start" id="startAudioRecord">⏺ Start Recording</button>
+            <button type="button" class="btn-record stop"  id="stopAudioRecord"  disabled>⏹ Stop</button>
+            <span class="record-timer" id="audioTimer">00:00</span>
+          </div>
+          <audio id="audioPreview" controls style="margin-top:12px;width:100%;display:none;"></audio>
+        </div>
+      </div>
+
+      <!-- 3c. Text panel -->
+      <div id="panel-text" class="message-panel" style="display:none">
+        <div class="form-group">
+          <label for="textMessage">Your Message <span class="required">*</span></label>
+          <textarea id="textMessage" placeholder="Write your message here…"></textarea>
+        </div>
+      </div>
+
+      <!-- Upload progress (video/audio only) -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-label">
+          <span>Uploading…</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- 4. Delivery -->
+      <div class="form-group">
+        <label>Delivery <span class="required">*</span></label>
+        <div class="radio-group">
+          <label class="radio-item">
+            <input type="radio" name="deliveryType" value="now" checked /> Send Now
+          </label>
+          <label class="radio-item">
+            <input type="radio" name="deliveryType" value="scheduled" /> Schedule for Later
+          </label>
+        </div>
+        <div id="scheduledDateWrapper">
+          <label for="scheduledDate" style="margin-top:14px">Scheduled Date & Time <span class="required">*</span></label>
+          <input type="datetime-local" id="scheduledDate" />
+        </div>
+      </div>
+
+      <!-- 5. Submit -->
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span id="submitLabel">Send Message</span>
+        <div class="spinner" id="submitSpinner"></div>
+      </button>
+
+      <!-- Alerts -->
+      <div class="alert alert-success" id="alertSuccess">
+        🎉 Your message has been saved successfully!
+      </div>
+      <div class="alert alert-error" id="alertError"></div>
+
+    </form>
+  </div><!-- /.card -->
+
+
+  <!-- ============================================================
+       FIREBASE v9 (modular) — replace the config below with yours
+  ============================================================ -->
+  <script type="module">
+
+    // ── 0. Firebase config ──────────────────────────────────────
+    // Replace each placeholder value with your actual Firebase project credentials.
+    // Find these in: Firebase Console → Project Settings → Your Apps → SDK setup & config
+    import { initializeApp }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+    import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey:            "YOUR_API_KEY",
+      authDomain:        "YOUR_AUTH_DOMAIN",
+      projectId:         "YOUR_PROJECT_ID",
+      storageBucket:     "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId:             "YOUR_APP_ID"
+    };
+
+    // ── 1. Initialise Firebase services ────────────────────────
+    const app     = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    const db      = getFirestore(app);
+
+    // ── 2. DOM references ───────────────────────────────────────
+    const form            = document.getElementById("messageForm");
+    const submitBtn       = document.getElementById("submitBtn");
+    const submitLabel     = document.getElementById("submitLabel");
+    const submitSpinner   = document.getElementById("submitSpinner");
+    const alertSuccess    = document.getElementById("alertSuccess");
+    const alertError      = document.getElementById("alertError");
+    const progressWrap    = document.getElementById("progressWrap");
+    const progressFill    = document.getElementById("progressFill");
+    const progressPct     = document.getElementById("progressPct");
+
+    // ── 3. Tab switching ────────────────────────────────────────
+    let activeType = "video"; // current message type
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        // Update active tab
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeType = btn.dataset.type;
+
+        // Show/hide panels
+        document.querySelectorAll(".message-panel").forEach(p => p.style.display = "none");
+        document.getElementById(`panel-${activeType}`).style.display = "block";
+      });
+    });
+
+    // ── 4. Drag-and-drop highlight ──────────────────────────────
+    ["videoUploadArea", "audioUploadArea"].forEach(id => {
+      const area = document.getElementById(id);
+      if (!area) return;
+      area.addEventListener("dragover", e => { e.preventDefault(); area.classList.add("dragover"); });
+      area.addEventListener("dragleave", () => area.classList.remove("dragover"));
+      area.addEventListener("drop",     e => { e.preventDefault(); area.classList.remove("dragover"); });
+    });
+
+    // Show file name when a file is chosen via input
+    document.getElementById("videoFile").addEventListener("change", e => {
+      const el = document.getElementById("videoFileChosen");
+      el.textContent = e.target.files[0] ? `✅ ${e.target.files[0].name}` : "";
+      el.style.display = e.target.files[0] ? "block" : "none";
+    });
+    document.getElementById("audioFile").addEventListener("change", e => {
+      const el = document.getElementById("audioFileChosen");
+      el.textContent = e.target.files[0] ? `✅ ${e.target.files[0].name}` : "";
+      el.style.display = e.target.files[0] ? "block" : "none";
+    });
+
+    // ── 5. Recording helpers ────────────────────────────────────
+    // Generic recorder factory used for both video and audio
+    function createRecorder({ startBtn, stopBtn, timerEl, previewEl, mimePrefix }) {
+      let mediaRecorder = null;
+      let chunks        = [];
+      let timerInterval = null;
+      let elapsed       = 0;
+      let recordedBlob  = null;
+
+      function formatTime(s) {
+        const m = String(Math.floor(s / 60)).padStart(2, "0");
+        const sec = String(s % 60).padStart(2, "0");
+        return `${m}:${sec}`;
+      }
+
+      startBtn.addEventListener("click", async () => {
+        try {
+          const constraints = mimePrefix === "video"
+            ? { video: true, audio: true }
+            : { audio: true };
+          const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+          // Live preview for video
+          if (mimePrefix === "video") {
+            previewEl.srcObject = stream;
+            previewEl.muted     = true;
+            previewEl.play();
+            previewEl.style.display = "block";
+          }
+
+          chunks       = [];
+          recordedBlob = null;
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+          mediaRecorder.onstop = () => {
+            // Build final blob
+            const mimeType   = mimePrefix === "video" ? "video/webm" : "audio/webm";
+            recordedBlob     = new Blob(chunks, { type: mimeType });
+            const url        = URL.createObjectURL(recordedBlob);
+            previewEl.srcObject = null;
+            previewEl.src       = url;
+            previewEl.style.display = "block";
+            // Stop all tracks
+            stream.getTracks().forEach(t => t.stop());
+          };
+          mediaRecorder.start();
+
+          // Timer
+          elapsed = 0;
+          timerEl.textContent = formatTime(elapsed);
+          timerInterval = setInterval(() => {
+            elapsed++;
+            timerEl.textContent = formatTime(elapsed);
+          }, 1000);
+
+          startBtn.disabled = true;
+          stopBtn.disabled  = false;
+        } catch (err) {
+          showError("Could not access camera/microphone: " + err.message);
+        }
+      });
+
+      stopBtn.addEventListener("click", () => {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+        }
+        clearInterval(timerInterval);
+        startBtn.disabled = false;
+        stopBtn.disabled  = true;
+      });
+
+      return {
+        getBlob: () => recordedBlob
+      };
+    }
+
+    // Initialise video recorder
+    const videoRecorder = createRecorder({
+      startBtn:   document.getElementById("startVideoRecord"),
+      stopBtn:    document.getElementById("stopVideoRecord"),
+      timerEl:    document.getElementById("videoTimer"),
+      previewEl:  document.getElementById("recordedPreview"),
+      mimePrefix: "video"
+    });
+
+    // Initialise audio recorder
+    const audioRecorder = createRecorder({
+      startBtn:   document.getElementById("startAudioRecord"),
+      stopBtn:    document.getElementById("stopAudioRecord"),
+      timerEl:    document.getElementById("audioTimer"),
+      previewEl:  document.getElementById("audioPreview"),
+      mimePrefix: "audio"
+    });
+
+    // ── 6. Delivery toggle ──────────────────────────────────────
+    document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        document.getElementById("scheduledDateWrapper").style.display =
+          radio.value === "scheduled" ? "block" : "none";
+      });
+    });
+
+    // ── 7. Helpers ──────────────────────────────────────────────
+    function showError(msg) {
+      alertError.textContent  = "⚠️ " + msg;
+      alertError.style.display = "block";
+      alertSuccess.style.display = "none";
+    }
+    function clearAlerts() {
+      alertError.style.display   = "none";
+      alertSuccess.style.display = "none";
+    }
+    function setLoading(state) {
+      submitBtn.disabled         = state;
+      submitSpinner.style.display = state ? "inline-block" : "none";
+      submitLabel.textContent    = state ? "Saving…" : "Send Message";
+    }
+    function updateProgress(pct) {
+      progressFill.style.width = pct + "%";
+      progressPct.textContent  = Math.round(pct) + "%";
+    }
+
+    // ── 8. Upload file to Firebase Storage ─────────────────────
+    // Returns a Promise that resolves with { downloadURL }
+    function uploadFile(file) {
+      return new Promise((resolve, reject) => {
+        const timestamp  = Date.now();
+        const safeName   = file.name.replace(/\s+/g, "_");
+        const storagePath = `messages/${timestamp}_${safeName}`;
+        const storageRef  = ref(storage, storagePath);
+        const uploadTask  = uploadBytesResumable(storageRef, file);
+
+        // Show progress bar
+        progressWrap.style.display = "block";
+        updateProgress(0);
+
+        uploadTask.on(
+          "state_changed",
+          // Progress snapshot
+          snapshot => {
+            const pct = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            updateProgress(pct);
+          },
+          // Error
+          err => {
+            progressWrap.style.display = "none";
+            reject(err);
+          },
+          // Completed
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            progressWrap.style.display = "none";
+            resolve({ downloadURL });
+          }
+        );
+      });
+    }
+
+    // ── 9. Save document to Firestore ───────────────────────────
+    async function saveToFirestore(data) {
+      const docRef = await addDoc(collection(db, "messages"), data);
+      return docRef.id;
+    }
+
+    // ── 10. Form submission ─────────────────────────────────────
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      clearAlerts();
+
+      // — Collect values
+      const recipientEmail = document.getElementById("recipientEmail").value.trim();
+      const deliveryType   = document.querySelector('input[name="deliveryType"]:checked').value;
+      const scheduledDate  = document.getElementById("scheduledDate").value;
+      const textMessage    = document.getElementById("textMessage").value.trim();
+
+      // — Validation
+      if (!recipientEmail) {
+        return showError("Recipient email is required.");
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail)) {
+        return showError("Please enter a valid email address.");
+      }
+      if (deliveryType === "scheduled" && !scheduledDate) {
+        return showError("Please choose a scheduled date and time.");
+      }
+
+      // Resolve the file to upload (uploaded file takes priority over recording)
+      let fileToUpload = null;
+      if (activeType === "video") {
+        const input = document.getElementById("videoFile");
+        fileToUpload = (input.files && input.files[0]) || videoRecorder.getBlob();
+        if (!fileToUpload) return showError("Please upload or record a video.");
+      } else if (activeType === "audio") {
+        const input = document.getElementById("audioFile");
+        fileToUpload = (input.files && input.files[0]) || audioRecorder.getBlob();
+        if (!fileToUpload) return showError("Please upload or record an audio message.");
+      } else if (activeType === "text") {
+        if (!textMessage) return showError("Please write a text message.");
+      }
+
+      // — Start loading state
+      setLoading(true);
+
+      try {
+        // Build the Firestore document
+        const docData = {
+          type:           activeType,                        // "video" | "audio" | "text"
+          recipientEmail: recipientEmail,
+          deliveryType:   deliveryType,                      // "now" | "scheduled"
+          createdAt:      Timestamp.now()
+        };
+
+        // Add scheduled timestamp if applicable
+        if (deliveryType === "scheduled") {
+          docData.scheduledDate = Timestamp.fromDate(new Date(scheduledDate));
+        }
+
+        if (activeType === "text") {
+          // Text messages go straight to Firestore
+          docData.textMessage = textMessage;
+          docData.fileURL      = null;
+        } else {
+          // Upload media → get URL → store in Firestore
+          const { downloadURL } = await uploadFile(fileToUpload);
+          docData.fileURL      = downloadURL;
+          docData.textMessage  = null;
+        }
+
+        // Save to Firestore
+        const docId = await saveToFirestore(docData);
+        console.log("✅ Saved Firestore document:", docId);
+
+        // — Success
+        alertSuccess.style.display = "block";
+        form.reset();
+
+        // Reset UI state
+        document.getElementById("videoFileChosen").style.display = "none";
+        document.getElementById("audioFileChosen").style.display = "none";
+        document.getElementById("recordedPreview").style.display = "none";
+        document.getElementById("audioPreview").style.display    = "none";
+        document.getElementById("scheduledDateWrapper").style.display = "none";
+
+      } catch (err) {
+        console.error("Firebase error:", err);
+        showError("Something went wrong: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+  </script>
+</body>
+</html>
