@@ -2,1739 +2,1785 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Capsule — Say what matters, when it matters.</title>
 <style>
-/* ═══════════════════════════════════════════════════════════
-   TOKENS & RESET
-═══════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:       #0d0d12;
-  --ink2:      #3a3a4a;
-  --muted:     #8a8a9a;
-  --divider:   #ebebf0;
-  --surface:   #ffffff;
-  --sheet:     #f7f7fb;
-  --accent:    #6c5ce7;
-  --accent2:   #a29bfe;
-  --accent-g:  linear-gradient(135deg,#6c5ce7 0%,#a29bfe 100%);
-  --teal:      #00b894;
-  --peach:     #fd79a8;
-  --amber:     #fdcb6e;
-  --ruby:      #e17055;
-  --radius-sm: 12px;
-  --radius:    20px;
-  --radius-lg: 28px;
-  --shadow-sm: 0 2px 12px rgba(0,0,0,.07);
-  --shadow:    0 8px 32px rgba(108,92,231,.15);
-  --shadow-lg: 0 24px 64px rgba(0,0,0,.18);
-  --ease:      cubic-bezier(.25,.8,.25,1);
-  --spring:    cubic-bezier(.34,1.56,.64,1);
+  --ink:        #0d0d12;
+  --ink2:       #3a3a4a;
+  --muted:      #8a8a9a;
+  --divider:    #e8e8f0;
+  --surface:    #ffffff;
+  --sheet:      #f6f6fb;
+  --accent:     #5b4fcf;
+  --accent-lt:  #7c6fe0;
+  --accent2:    #a29bfe;
+  --accent-g:   linear-gradient(135deg,#5b4fcf 0%,#a29bfe 100%);
+  --teal:       #00b894;
+  --ruby:       #e17055;
+  --peach:      #fd79a8;
+  --amber:      #fdcb6e;
+  --radius-sm:  10px;
+  --radius:     16px;
+  --radius-lg:  24px;
+  --radius-xl:  32px;
+  --shadow-sm:  0 2px 12px rgba(0,0,0,.06);
+  --shadow:     0 8px 32px rgba(91,79,207,.13);
+  --shadow-lg:  0 20px 60px rgba(0,0,0,.14);
+  --ease:       cubic-bezier(.25,.8,.25,1);
+  --spring:     cubic-bezier(.34,1.56,.64,1);
+  --nav-h:      70px;
+  --max-w:      1160px;
 }
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body{
-  font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',system-ui,sans-serif;
   background:var(--surface);
   color:var(--ink);
   overflow-x:hidden;
-  line-height:1.5;
+  line-height:1.55;
 }
-img,video,audio{max-width:100%;display:block}
-button{font-family:inherit;cursor:pointer;border:none;outline:none;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
 a{text-decoration:none;color:inherit}
+img,video,audio{max-width:100%;display:block}
 
-/* ═══════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════
    NAV
-═══════════════════════════════════════════════════════════ */
+════════════════════════════════════════════════════════════ */
 nav{
-  position:fixed;top:0;left:0;right:0;z-index:900;
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:var(--nav-h);
+  display:flex;align-items:center;
+  padding:0 40px;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(24px) saturate(200%);
+  -webkit-backdrop-filter:blur(24px) saturate(200%);
+  border-bottom:1px solid rgba(232,232,240,.7);
+}
+.nav-inner{
+  max-width:var(--max-w);width:100%;margin:0 auto;
   display:flex;align-items:center;justify-content:space-between;
-  padding:16px 24px;
-  background:rgba(255,255,255,.82);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
-  border-bottom:1px solid rgba(235,235,240,.6);
-  transition:all .3s var(--ease);
 }
 .nav-logo{
-  font-size:1.3rem;font-weight:700;letter-spacing:-.5px;
+  font-size:1.35rem;font-weight:800;letter-spacing:-.5px;
   background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.nav-cta{
+.nav-links{
+  display:flex;align-items:center;gap:32px;
+  list-style:none;
+}
+.nav-links a{
+  font-size:.9rem;font-weight:500;color:var(--ink2);
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-btn-ghost{
+  padding:8px 20px;border-radius:99px;font-size:.875rem;font-weight:600;
+  color:var(--ink2);border:1.5px solid var(--divider);
+  transition:border-color .2s,color .2s;
+  background:transparent;
+}
+.nav-btn-ghost:hover{border-color:var(--accent2);color:var(--accent)}
+.nav-btn-cta{
+  padding:9px 22px;border-radius:99px;font-size:.875rem;font-weight:700;
   background:var(--accent-g);color:#fff;
-  padding:9px 20px;border-radius:99px;
-  font-size:.85rem;font-weight:600;letter-spacing:.01em;
+  box-shadow:0 4px 16px rgba(91,79,207,.35);
   transition:transform .2s var(--spring),box-shadow .2s;
-  box-shadow:0 4px 14px rgba(108,92,231,.35);
 }
-.nav-cta:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 20px rgba(108,92,231,.45)}
-.nav-cta:active{transform:scale(.97)}
+.nav-btn-cta:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 24px rgba(91,79,207,.45)}
+.nav-btn-cta:active{transform:scale(.97)}
 
-/* ═══════════════════════════════════════════════════════════
-   HERO
-═══════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   HERO  — two-column layout
+════════════════════════════════════════════════════════════ */
 .hero{
-  min-height:100svh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:100px 24px 60px;
+  padding-top:calc(var(--nav-h) + 80px);
+  padding-bottom:100px;
+  padding-left:40px;padding-right:40px;
   position:relative;overflow:hidden;
-  text-align:center;
 }
-/* Ambient blobs */
-.hero::before,.hero::after{
-  content:'';position:absolute;border-radius:50%;filter:blur(80px);opacity:.35;pointer-events:none;
+.hero-inner{
+  max-width:var(--max-w);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:64px;
 }
-.hero::before{
-  width:520px;height:520px;top:-120px;right:-160px;
-  background:radial-gradient(circle,#a29bfe,#6c5ce7);
-  animation:blob1 8s ease-in-out infinite alternate;
+/* Ambient gradient orbs */
+.orb{
+  position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;opacity:.35;
 }
-.hero::after{
-  width:400px;height:400px;bottom:-80px;left:-100px;
-  background:radial-gradient(circle,#fd79a8,#fdcb6e);
-  animation:blob2 10s ease-in-out infinite alternate;
-}
-@keyframes blob1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-40px,40px) scale(1.1)}}
-@keyframes blob2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,-30px) scale(1.08)}}
+.orb-1{width:600px;height:600px;background:radial-gradient(#a29bfe,#5b4fcf);top:-180px;right:-120px;animation:orb1 9s ease-in-out infinite alternate}
+.orb-2{width:500px;height:500px;background:radial-gradient(#fd79a8,#fdcb6e);bottom:-140px;left:-100px;animation:orb2 11s ease-in-out infinite alternate}
+@keyframes orb1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-60px,50px) scale(1.1)}}
+@keyframes orb2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(50px,-40px) scale(1.08)}}
 
-.hero-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(108,92,231,.1);
-  border:1px solid rgba(108,92,231,.2);
-  color:var(--accent);font-size:.78rem;font-weight:600;letter-spacing:.04em;
+/* Left column */
+.hero-left{position:relative;z-index:1}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(91,79,207,.08);border:1px solid rgba(91,79,207,.18);
+  color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
   padding:5px 14px;border-radius:99px;margin-bottom:28px;
-  animation:fadeUp .8s var(--ease) both;
+  animation:fadeUp .7s var(--ease) both;
 }
+.hero-eyebrow span{font-size:.85rem}
 .hero h1{
-  font-size:clamp(2.4rem,8vw,4.2rem);
-  font-weight:800;letter-spacing:-.03em;line-height:1.1;
-  max-width:720px;
-  animation:fadeUp .8s .1s var(--ease) both;
+  font-size:clamp(2.8rem,4.5vw,4rem);font-weight:800;
+  letter-spacing:-.04em;line-height:1.08;
+  margin-bottom:22px;
+  animation:fadeUp .7s .08s var(--ease) both;
 }
-.hero h1 span{
+.hero h1 em{
+  font-style:normal;
   background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .hero-sub{
-  font-size:clamp(1rem,3vw,1.2rem);color:var(--ink2);
-  max-width:480px;margin-top:16px;line-height:1.6;
-  animation:fadeUp .8s .2s var(--ease) both;
+  font-size:1.12rem;color:var(--ink2);line-height:1.7;
+  max-width:460px;margin-bottom:40px;
+  animation:fadeUp .7s .16s var(--ease) both;
 }
 .hero-actions{
-  display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:40px;
-  animation:fadeUp .8s .3s var(--ease) both;
+  display:flex;flex-wrap:wrap;gap:14px;
+  animation:fadeUp .7s .24s var(--ease) both;
 }
 .btn-primary{
-  display:inline-flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;gap:9px;
   background:var(--accent-g);color:#fff;
-  padding:15px 32px;border-radius:99px;
-  font-size:1rem;font-weight:700;letter-spacing:.01em;
-  box-shadow:0 8px 28px rgba(108,92,231,.45);
+  padding:14px 32px;border-radius:99px;
+  font-size:1rem;font-weight:700;
+  box-shadow:0 8px 28px rgba(91,79,207,.4);
   transition:transform .25s var(--spring),box-shadow .25s;
   position:relative;overflow:hidden;
 }
-.btn-primary::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
-  border-radius:inherit;
-}
-.btn-primary:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 36px rgba(108,92,231,.55)}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);border-radius:inherit}
+.btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 36px rgba(91,79,207,.5)}
 .btn-primary:active{transform:scale(.97)}
-.btn-ghost{
+.btn-secondary{
   display:inline-flex;align-items:center;gap:8px;
-  background:transparent;color:var(--ink2);
-  padding:14px 28px;border-radius:99px;
-  font-size:1rem;font-weight:600;
+  padding:13px 28px;border-radius:99px;
+  font-size:1rem;font-weight:600;color:var(--ink2);
   border:1.5px solid var(--divider);
   transition:border-color .2s,color .2s,transform .2s var(--spring);
+  background:transparent;
 }
-.btn-ghost:hover{border-color:var(--accent2);color:var(--accent);transform:translateY(-2px)}
+.btn-secondary:hover{border-color:var(--accent2);color:var(--accent);transform:translateY(-2px)}
 
-/* Floating preview cards */
-.hero-media{
-  position:relative;margin-top:60px;width:100%;max-width:380px;
-  animation:fadeUp .8s .45s var(--ease) both;
+/* Social proof strip */
+.hero-proof{
+  display:flex;align-items:center;gap:16px;margin-top:48px;
+  animation:fadeUp .7s .32s var(--ease) both;
 }
-.float-card{
+.proof-avatars{display:flex}
+.proof-avatars span{
+  width:34px;height:34px;border-radius:50%;
+  border:2.5px solid #fff;margin-left:-10px;
+  background:var(--accent-g);display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;color:#fff;font-weight:700;
+}
+.proof-avatars span:first-child{margin-left:0}
+.proof-text{font-size:.82rem;color:var(--muted)}
+.proof-text strong{color:var(--ink2)}
+
+/* Right column — visual showcase */
+.hero-right{
+  position:relative;z-index:1;
+  animation:fadeUp .7s .2s var(--ease) both;
+}
+.hero-visual{
+  position:relative;width:100%;
+}
+/* Main browser-style mockup */
+.browser-mock{
+  background:#fff;border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg),0 0 0 1px rgba(0,0,0,.06);
+  overflow:hidden;
+}
+.browser-bar{
+  background:var(--sheet);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--divider);
+}
+.browser-dots{display:flex;gap:6px}
+.browser-dot{width:11px;height:11px;border-radius:50%}
+.bd-red{background:#ff5f57}
+.bd-yellow{background:#febc2e}
+.bd-green{background:#28c840}
+.browser-url{
+  flex:1;background:#fff;border-radius:6px;border:1px solid var(--divider);
+  padding:5px 12px;font-size:.75rem;color:var(--muted);
+  display:flex;align-items:center;gap:6px;
+}
+.browser-url::before{content:'🔒';font-size:.7rem}
+.browser-body{padding:24px;background:var(--sheet)}
+
+/* Cards inside browser */
+.capture-preview-card{
   background:#fff;border-radius:var(--radius);
-  box-shadow:var(--shadow-lg);padding:16px;
-  display:flex;align-items:center;gap:12px;
-  position:absolute;font-size:.82rem;
+  border:1px solid var(--divider);overflow:hidden;
 }
-.float-card .icon{
+.cpcard-header{
+  padding:14px 18px;border-bottom:1px solid var(--divider);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cpcard-title{font-size:.85rem;font-weight:700;color:var(--ink)}
+.cpcard-badge{
+  font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px;
+  background:rgba(0,184,148,.1);color:var(--teal);
+}
+.cpcard-body{padding:18px}
+
+/* Waveform inside card */
+.waveform{display:flex;align-items:center;gap:3px;height:48px}
+.wf-bar{width:4px;border-radius:99px;background:var(--accent2)}
+.wf-bar.played{background:var(--accent)}
+
+/* Step indicator inside card */
+.mini-steps{
+  display:flex;align-items:center;gap:6px;margin-bottom:14px;
+}
+.mini-step{
+  flex:1;height:3px;border-radius:99px;background:var(--divider);
+}
+.mini-step.done{background:var(--accent)}
+.mini-step.active{background:var(--accent-g)}
+
+/* Floating stat cards */
+.stat-card{
+  position:absolute;background:#fff;border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  font-size:.82rem;white-space:nowrap;
+}
+.stat-icon{
   width:38px;height:38px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;
   font-size:1.1rem;flex-shrink:0;
 }
-.float-card strong{display:block;font-weight:600;color:var(--ink)}
-.float-card span{color:var(--muted)}
-.fc1{top:-20px;right:-20px;animation:floatA 4s ease-in-out infinite}
-.fc2{bottom:10px;left:-24px;animation:floatB 4s 1.5s ease-in-out infinite}
-@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.stat-card strong{display:block;font-weight:700;color:var(--ink);font-size:.83rem}
+.stat-card span{color:var(--muted);font-size:.72rem}
+.sc1{top:-22px;left:-30px;animation:float1 4s ease-in-out infinite}
+.sc2{bottom:-18px;right:-24px;animation:float2 4.5s 1s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes float2{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 
-.phone-mock{
-  width:220px;height:400px;margin:0 auto;
-  background:var(--ink);border-radius:36px;
-  box-shadow:0 30px 80px rgba(0,0,0,.35);
-  overflow:hidden;position:relative;
-  border:6px solid #1a1a24;
-}
-.phone-screen{
-  width:100%;height:100%;
-  background:linear-gradient(160deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;
-}
-.phone-wave{
-  display:flex;align-items:center;gap:4px;
-}
-.phone-wave span{
-  display:block;width:4px;background:var(--accent2);border-radius:99px;
-  animation:wave 1.2s ease-in-out infinite;
-}
-.phone-wave span:nth-child(1){height:16px;animation-delay:0s}
-.phone-wave span:nth-child(2){height:28px;animation-delay:.1s}
-.phone-wave span:nth-child(3){height:40px;animation-delay:.2s}
-.phone-wave span:nth-child(4){height:28px;animation-delay:.3s}
-.phone-wave span:nth-child(5){height:16px;animation-delay:.4s}
-.phone-wave span:nth-child(6){height:36px;animation-delay:.15s}
-.phone-wave span:nth-child(7){height:22px;animation-delay:.25s}
-@keyframes wave{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.4);opacity:.5}}
-.phone-label{color:rgba(255,255,255,.5);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
-.phone-dot{
-  width:10px;height:10px;background:var(--peach);border-radius:50%;
-  position:absolute;top:16px;left:50%;transform:translateX(-50%);
-  box-shadow:0 0 8px var(--peach);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SECTION: HOW IT WORKS
-═══════════════════════════════════════════════════════════ */
-.section{padding:80px 24px}
-.section-inner{max-width:1000px;margin:0 auto}
-.section-tag{
+/* ════════════════════════════════════════════════════════════
+   SECTION SHARED
+════════════════════════════════════════════════════════════ */
+section{padding:100px 40px}
+.section-inner{max-width:var(--max-w);margin:0 auto}
+.section-eyebrow{
   display:inline-block;
-  background:rgba(108,92,231,.08);color:var(--accent);
-  font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  padding:5px 14px;border-radius:99px;margin-bottom:16px;
+  background:rgba(91,79,207,.08);color:var(--accent);
+  font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 14px;border-radius:99px;margin-bottom:16px;
 }
 .section-title{
-  font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;
-  letter-spacing:-.03em;line-height:1.15;margin-bottom:14px;
+  font-size:clamp(1.9rem,3.5vw,2.9rem);font-weight:800;
+  letter-spacing:-.035em;line-height:1.15;margin-bottom:16px;
 }
-.section-sub{color:var(--ink2);font-size:1.05rem;max-width:500px;line-height:1.7}
+.section-sub{font-size:1.05rem;color:var(--ink2);max-width:540px;line-height:1.72}
 
-.steps-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;margin-top:52px;
-}
-.step-card{
-  background:var(--sheet);border-radius:var(--radius);
-  padding:28px 24px;position:relative;overflow:hidden;
-  transition:transform .3s var(--spring),box-shadow .3s;
-  border:1px solid transparent;
-}
-.step-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:var(--divider)}
-.step-num{
-  font-size:3.5rem;font-weight:800;letter-spacing:-.05em;
-  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  opacity:.15;position:absolute;top:12px;right:16px;line-height:1;
-}
-.step-icon{
-  width:48px;height:48px;border-radius:14px;
-  background:var(--accent-g);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;margin-bottom:16px;
-  box-shadow:0 4px 16px rgba(108,92,231,.3);
-}
-.step-card h3{font-size:1.05rem;font-weight:700;margin-bottom:6px}
-.step-card p{font-size:.88rem;color:var(--ink2);line-height:1.6}
-
-/* ═══════════════════════════════════════════════════════════
-   SECTION: JUST IN CASE (emotional)
-═══════════════════════════════════════════════════════════ */
-.jic-section{
-  padding:80px 24px;
-  background:linear-gradient(160deg,#0d0d12 0%,#1a1635 100%);
-  position:relative;overflow:hidden;
-}
-.jic-section::before{
-  content:'';position:absolute;width:600px;height:600px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(108,92,231,.25),transparent 70%);
-  top:-200px;right:-200px;pointer-events:none;
-}
-.jic-inner{max-width:700px;margin:0 auto;text-align:center;position:relative;z-index:1}
-.jic-icon{
-  font-size:3rem;margin-bottom:24px;
-  display:inline-block;animation:pulse 3s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.jic-inner .section-tag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
-.jic-inner .section-title{color:#fff}
-.jic-inner .section-sub{color:rgba(255,255,255,.55);max-width:580px;margin:0 auto}
-.jic-cards{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:16px;margin-top:48px;
-}
-.jic-card{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:var(--radius);padding:24px 18px;text-align:left;
-  backdrop-filter:blur(10px);
-}
-.jic-card-icon{font-size:1.5rem;margin-bottom:10px}
-.jic-card h4{color:#fff;font-size:.9rem;font-weight:700;margin-bottom:6px}
-.jic-card p{color:rgba(255,255,255,.45);font-size:.8rem;line-height:1.6}
-
-/* ═══════════════════════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════════════════════ */
-footer{
-  padding:40px 24px;text-align:center;
-  border-top:1px solid var(--divider);
-  color:var(--muted);font-size:.85rem;
-}
-footer strong{
-  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  font-weight:700;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   MODAL OVERLAY
-═══════════════════════════════════════════════════════════ */
-.modal-overlay{
-  position:fixed;inset:0;z-index:1000;
-  display:flex;align-items:flex-end;justify-content:center;
-  background:rgba(10,10,18,.5);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;
-  transition:opacity .35s var(--ease);
-}
-.modal-overlay.open{opacity:1;pointer-events:all}
-
-.modal{
-  width:100%;max-width:520px;
-  background:var(--surface);
-  border-radius:28px 28px 0 0;
-  max-height:92svh;overflow-y:auto;overflow-x:hidden;
-  transform:translateY(100%);
-  transition:transform .45s var(--spring);
-  position:relative;
-  padding-bottom:env(safe-area-inset-bottom,20px);
-}
-.modal-overlay.open .modal{transform:translateY(0)}
-
-/* Desktop — center it */
-@media(min-width:600px){
-  .modal-overlay{align-items:center}
-  .modal{border-radius:var(--radius-lg);max-height:88vh}
-}
-
-/* Drag handle */
-.modal-handle{
-  width:40px;height:4px;background:var(--divider);
-  border-radius:99px;margin:14px auto 0;
-}
-.modal-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 24px 8px;
-}
-.modal-title{font-size:1rem;font-weight:700;color:var(--ink)}
-.modal-close{
-  width:32px;height:32px;border-radius:50%;
-  background:var(--sheet);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;color:var(--muted);
-  transition:background .2s,transform .2s var(--spring);
-}
-.modal-close:hover{background:var(--divider);transform:scale(1.1)}
-
-/* ── Step progress ─────────────────────────────────────── */
-.step-progress{
-  display:flex;align-items:center;gap:6px;
-  padding:0 24px 20px;
-}
-.sp-dot{
-  height:4px;border-radius:99px;background:var(--divider);
-  flex:1;overflow:hidden;
-  transition:background .3s;
-  position:relative;
-}
-.sp-dot.active::after{
-  content:'';position:absolute;inset:0;
-  background:var(--accent-g);
-  border-radius:99px;
-  animation:fillBar .4s var(--ease) forwards;
-}
-.sp-dot.done{background:var(--accent2)}
-@keyframes fillBar{from{width:0}to{width:100%}}
-
-/* ═══════════════════════════════════════════════════════════
-   STEPS (shared transition wrapper)
-═══════════════════════════════════════════════════════════ */
-.step-view{
-  padding:0 24px 28px;
-  opacity:0;transform:translateX(24px);
-  transition:opacity .35s var(--ease),transform .35s var(--ease);
-  display:none;
-}
-.step-view.visible{
-  display:block;opacity:1;transform:translateX(0);
-}
-.step-view.exit-left{
-  opacity:0;transform:translateX(-24px);
-  pointer-events:none;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   STEP 1 — FORMAT PICKER
-═══════════════════════════════════════════════════════════ */
-.format-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
-  margin-top:16px;
-}
-.fmt-btn{
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  padding:22px 12px;border-radius:var(--radius);
-  background:var(--sheet);
-  border:2px solid transparent;
-  transition:all .25s var(--spring);
-  color:var(--ink2);
-}
-.fmt-btn .fmt-icon{
-  font-size:1.8rem;
-  transition:transform .3s var(--spring);
-}
-.fmt-btn span{font-size:.8rem;font-weight:600;letter-spacing:.01em}
-.fmt-btn:hover{background:#f0eeff;border-color:var(--accent2);color:var(--accent);transform:translateY(-3px)}
-.fmt-btn:hover .fmt-icon{transform:scale(1.15)}
-.fmt-btn.selected{
-  background:linear-gradient(135deg,rgba(108,92,231,.12),rgba(162,155,254,.12));
-  border-color:var(--accent);color:var(--accent);
-  box-shadow:0 4px 20px rgba(108,92,231,.2);
-}
-.fmt-btn.selected .fmt-icon{transform:scale(1.1)}
-
-/* ═══════════════════════════════════════════════════════════
-   STEP 2 — CAPTURE
-═══════════════════════════════════════════════════════════ */
-/* --- Video panel --- */
-.capture-panel{display:none}
-.capture-panel.active{display:block}
-
-.video-preview-box{
-  width:100%;aspect-ratio:9/16;max-height:340px;
-  background:#0d0d12;border-radius:var(--radius);
-  overflow:hidden;position:relative;
-  display:flex;align-items:center;justify-content:center;
-}
-.video-preview-box video{
-  width:100%;height:100%;object-fit:cover;border-radius:var(--radius);
-}
-.video-placeholder{
-  display:flex;flex-direction:column;align-items:center;gap:12px;
-  color:rgba(255,255,255,.35);font-size:.85rem;text-align:center;
-}
-.video-placeholder span{font-size:2.5rem}
-
-.cam-controls{
-  display:flex;gap:12px;margin-top:14px;justify-content:center;flex-wrap:wrap;
-}
-
-/* Upload zone */
-.upload-zone{
-  border:2px dashed var(--divider);border-radius:var(--radius);
-  padding:28px 16px;text-align:center;cursor:pointer;
-  transition:border-color .2s,background .2s;position:relative;
-  margin-top:14px;
-}
-.upload-zone:hover{border-color:var(--accent2);background:#f7f5ff}
-.upload-zone input[type=file]{
-  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
-}
-.upload-zone .uz-icon{font-size:2rem;margin-bottom:8px}
-.upload-zone p{font-size:.85rem;color:var(--muted)}
-.upload-zone p strong{color:var(--accent)}
-.upload-chosen{
-  margin-top:8px;font-size:.78rem;color:var(--teal);font-weight:600;display:none;
-}
-
-/* Waveform / audio bar */
-.audio-viz{
-  display:flex;align-items:center;gap:3px;justify-content:center;
-  height:60px;margin:16px 0 8px;
-}
-.audio-viz .bar{
-  width:4px;border-radius:99px;background:var(--accent2);
-  height:8px;transition:height .15s;
-}
-.audio-viz.recording .bar{
-  animation:audioBar 1.2s ease-in-out infinite;
-}
-.audio-viz .bar:nth-child(1){animation-delay:.0s}
-.audio-viz .bar:nth-child(2){animation-delay:.08s}
-.audio-viz .bar:nth-child(3){animation-delay:.16s}
-.audio-viz .bar:nth-child(4){animation-delay:.24s}
-.audio-viz .bar:nth-child(5){animation-delay:.32s}
-.audio-viz .bar:nth-child(6){animation-delay:.16s}
-.audio-viz .bar:nth-child(7){animation-delay:.08s}
-.audio-viz .bar:nth-child(8){animation-delay:.24s}
-.audio-viz .bar:nth-child(9){animation-delay:.04s}
-.audio-viz .bar:nth-child(10){animation-delay:.2s}
-@keyframes audioBar{0%,100%{height:8px}50%{height:36px}}
-.rec-timer{
-  text-align:center;font-size:.95rem;font-weight:600;
-  color:var(--ink2);letter-spacing:.04em;font-variant-numeric:tabular-nums;
-}
-.rec-dot{
-  display:inline-block;width:8px;height:8px;
-  border-radius:50%;background:var(--ruby);margin-right:6px;
-  animation:blink 1s step-start infinite;opacity:0;
-}
-.recording .rec-dot{opacity:1}
-@keyframes blink{50%{opacity:0}0%,100%{opacity:1}}
-
-/* Text capture */
-.text-capture-wrap{margin-top:8px;position:relative}
-#textMessage{
-  width:100%;min-height:180px;
-  border:2px solid var(--divider);border-radius:var(--radius);
-  padding:18px;font-size:1.05rem;color:var(--ink);
-  background:var(--sheet);resize:none;
-  font-family:inherit;line-height:1.7;
-  transition:border-color .2s,box-shadow .2s;outline:none;
-}
-#textMessage:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(108,92,231,.12)}
-#textMessage::placeholder{color:var(--muted)}
-.char-count{
-  position:absolute;bottom:12px;right:14px;
-  font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums;
-}
-
-/* ── Shared capture control buttons ─────────────────────── */
-.cap-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:11px 20px;border-radius:99px;font-size:.875rem;font-weight:600;
-  transition:all .2s var(--spring);
-}
-.cap-btn-primary{
-  background:var(--accent-g);color:#fff;
-  box-shadow:0 4px 14px rgba(108,92,231,.35);
-}
-.cap-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(108,92,231,.45)}
-.cap-btn-primary:active{transform:scale(.96)}
-.cap-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.cap-btn-danger{background:#fee2e2;color:var(--ruby)}
-.cap-btn-danger:hover{background:#fecaca}
-.cap-btn-neutral{background:var(--sheet);color:var(--ink2);border:1.5px solid var(--divider)}
-.cap-btn-neutral:hover{border-color:var(--accent2);color:var(--accent)}
-.cap-btn-teal{background:rgba(0,184,148,.1);color:var(--teal)}
-.cap-btn-teal:hover{background:rgba(0,184,148,.2)}
-
-/* ── Next button row ─────────────────────────────────────── */
-.step-nav{
-  display:flex;justify-content:flex-end;gap:10px;
-  margin-top:24px;padding:0 24px 20px;
-}
-.step-nav.spread{justify-content:space-between}
-.btn-next{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:13px 28px;border-radius:99px;
-  background:var(--accent-g);color:#fff;
-  font-size:.95rem;font-weight:700;
-  box-shadow:0 4px 18px rgba(108,92,231,.35);
-  transition:all .25s var(--spring);
-}
-.btn-next:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(108,92,231,.45)}
-.btn-next:active{transform:scale(.97)}
-.btn-back{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:12px 22px;border-radius:99px;
-  background:var(--sheet);color:var(--ink2);
-  font-size:.9rem;font-weight:600;
-  border:1.5px solid var(--divider);
-  transition:all .2s;
-}
-.btn-back:hover{border-color:var(--accent2);color:var(--accent)}
-
-/* ═══════════════════════════════════════════════════════════
-   STEP 3 — PREVIEW
-═══════════════════════════════════════════════════════════ */
-.preview-box{
-  border-radius:var(--radius);overflow:hidden;
-  background:var(--sheet);position:relative;
-}
-.preview-box video,
-.preview-box audio{width:100%;border-radius:var(--radius)}
-.preview-text-box{
-  background:var(--sheet);border-radius:var(--radius);
-  padding:20px;font-size:1rem;color:var(--ink);
-  line-height:1.7;min-height:120px;word-break:break-word;
-  white-space:pre-wrap;
-}
-.preview-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(108,92,231,.1);color:var(--accent);
-  font-size:.78rem;font-weight:700;padding:5px 12px;border-radius:99px;
-  margin-bottom:14px;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   STEP 4 — ACTION SELECTION
-═══════════════════════════════════════════════════════════ */
-.action-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:12px;
-  margin-top:16px;
-}
-@media(max-width:360px){.action-grid{grid-template-columns:1fr}}
-
-.action-card{
-  padding:18px 14px;border-radius:var(--radius);
-  background:var(--sheet);
-  border:2px solid transparent;
-  text-align:left;
-  transition:all .25s var(--spring);
-  cursor:pointer;
-}
-.action-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm)}
-.action-card.selected{
-  border-color:var(--accent);
-  background:linear-gradient(135deg,rgba(108,92,231,.08),rgba(162,155,254,.08));
-}
-.ac-icon{font-size:1.5rem;margin-bottom:8px;display:block}
-.ac-title{font-size:.88rem;font-weight:700;color:var(--ink);display:block;margin-bottom:3px}
-.ac-sub{font-size:.75rem;color:var(--muted);line-height:1.4}
-
-/* Extra fields that slide in */
-.action-extra{
-  overflow:hidden;max-height:0;
-  transition:max-height .4s var(--ease),opacity .3s;
-  opacity:0;
-}
-.action-extra.open{max-height:400px;opacity:1}
-
-.field-group{margin-top:16px}
-.field-label{
-  display:block;font-size:.8rem;font-weight:700;
-  color:var(--ink2);letter-spacing:.03em;margin-bottom:6px;
-}
-.field-input{
-  width:100%;padding:12px 16px;
-  border:1.5px solid var(--divider);border-radius:12px;
-  font-size:.9rem;color:var(--ink);background:var(--surface);
-  font-family:inherit;transition:border-color .2s,box-shadow .2s;outline:none;
-}
-.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,92,231,.12)}
-.field-input::placeholder{color:var(--muted)}
-.field-input + .field-input{margin-top:8px}
-
-.field-note{
-  font-size:.75rem;color:var(--muted);margin-top:8px;
-  display:flex;align-items:flex-start;gap:5px;line-height:1.5;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   STEP 5 — SUCCESS
-═══════════════════════════════════════════════════════════ */
-.success-view{
-  padding:28px 24px 36px;text-align:center;
-}
-.success-anim{
-  width:80px;height:80px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(0,184,148,.15),rgba(0,184,148,.05));
-  border:2px solid rgba(0,184,148,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:2rem;margin:0 auto 20px;
-  animation:successPop .5s var(--spring) both;
-}
-@keyframes successPop{
-  0%{transform:scale(0);opacity:0}
-  70%{transform:scale(1.1)}
-  100%{transform:scale(1);opacity:1}
-}
-.success-view h2{font-size:1.4rem;font-weight:800;margin-bottom:8px}
-.success-view p{color:var(--muted);font-size:.9rem;line-height:1.6}
-.success-pill{
-  display:inline-block;
-  background:rgba(0,184,148,.1);color:var(--teal);
-  font-size:.8rem;font-weight:700;padding:6px 16px;border-radius:99px;
-  margin:16px 0 24px;
-}
-.btn-done{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--accent-g);color:#fff;
-  padding:13px 32px;border-radius:99px;
-  font-size:.95rem;font-weight:700;
-  box-shadow:0 4px 18px rgba(108,92,231,.35);
-  transition:all .25s var(--spring);
-}
-.btn-done:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(108,92,231,.45)}
-
-/* ═══════════════════════════════════════════════════════════
-   EMPTY STATE
-═══════════════════════════════════════════════════════════ */
-.empty-state{
-  text-align:center;padding:32px 16px;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-}
-.empty-state span{font-size:2.5rem}
-.empty-state p{color:var(--muted);font-size:.85rem;max-width:220px;line-height:1.6}
-
-/* ═══════════════════════════════════════════════════════════
-   UTILITY
-═══════════════════════════════════════════════════════════ */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.hidden{display:none!important}
-.divider{height:1px;background:var(--divider);margin:16px 0}
-
-/* scrollbar */
-.modal::-webkit-scrollbar{width:4px}
-.modal::-webkit-scrollbar-track{background:transparent}
-.modal::-webkit-scrollbar-thumb{background:var(--divider);border-radius:99px}
-
-/* ═══════════════════════════════════════════════════════════
-   SECTION: FEATURES / USE CASES
-═══════════════════════════════════════════════════════════ */
-.features-bg{background:var(--sheet)}
-.use-cases{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:16px;margin-top:48px;
-}
-.uc-card{
-  background:var(--surface);border-radius:var(--radius);
-  padding:24px 20px;
-  box-shadow:var(--shadow-sm);
-  border:1px solid var(--divider);
-  transition:transform .3s var(--spring),box-shadow .3s;
-}
-.uc-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
-.uc-emoji{font-size:2rem;margin-bottom:12px}
-.uc-card h4{font-size:.95rem;font-weight:700;margin-bottom:6px}
-.uc-card p{font-size:.82rem;color:var(--ink2);line-height:1.6}
-
-/* ═══════════════════════════════════════════════════════════
-   SCROLL ANIMATIONS (Intersection Observer)
-═══════════════════════════════════════════════════════════ */
+/* Reveal animation */
 .reveal{
   opacity:0;transform:translateY(28px);
   transition:opacity .7s var(--ease),transform .7s var(--ease);
 }
 .reveal.in-view{opacity:1;transform:translateY(0)}
-.reveal-delay-1{transition-delay:.1s}
-.reveal-delay-2{transition-delay:.2s}
-.reveal-delay-3{transition-delay:.3s}
+.rd1{transition-delay:.1s}
+.rd2{transition-delay:.2s}
+.rd3{transition-delay:.3s}
+.rd4{transition-delay:.4s}
 
-/* ═══════════════════════════════════════════════════════════
-   MISC RESPONSIVE TWEAKS
-═══════════════════════════════════════════════════════════ */
-@media(max-width:420px){
-  .format-grid{grid-template-columns:repeat(3,1fr);gap:8px}
-  .fmt-btn{padding:16px 8px}
-  .fmt-btn .fmt-icon{font-size:1.5rem}
-  .action-grid{grid-template-columns:1fr 1fr}
-  .cam-controls{flex-direction:column;align-items:stretch}
-  .cam-controls .cap-btn{justify-content:center}
+/* ════════════════════════════════════════════════════════════
+   HOW IT WORKS — 3 col grid
+════════════════════════════════════════════════════════════ */
+#how{background:var(--sheet)}
+.how-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin-top:56px;
+  border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.how-card{
+  background:#fff;padding:36px 32px;
+  border-right:1px solid var(--divider);
+  position:relative;overflow:hidden;
+  transition:transform .3s var(--spring);
+}
+.how-card:last-child{border-right:none}
+.how-card:hover{transform:translateY(-4px);z-index:1;box-shadow:var(--shadow)}
+.how-num{
+  font-size:5rem;font-weight:800;letter-spacing:-.06em;
+  position:absolute;top:16px;right:20px;
+  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:.1;line-height:1;
+}
+.how-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--accent-g);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:20px;
+  box-shadow:0 6px 20px rgba(91,79,207,.3);
+}
+.how-card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.how-card p{font-size:.88rem;color:var(--ink2);line-height:1.65}
+
+/* ════════════════════════════════════════════════════════════
+   USE CASES — alternating layout
+════════════════════════════════════════════════════════════ */
+.uc-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  margin-top:56px;
+}
+.uc-card{
+  border-radius:var(--radius-lg);padding:30px 26px;
+  transition:transform .3s var(--spring),box-shadow .3s;
+  border:1px solid var(--divider);
+}
+.uc-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.uc-card:nth-child(1){background:#f5f3ff}
+.uc-card:nth-child(2){background:#fff1f8}
+.uc-card:nth-child(3){background:#f0fdf9}
+.uc-card:nth-child(4){background:#fffbf0}
+.uc-emoji{font-size:2.2rem;margin-bottom:14px}
+.uc-card h4{font-size:1rem;font-weight:700;margin-bottom:8px}
+.uc-card p{font-size:.85rem;color:var(--ink2);line-height:1.65}
+
+/* ════════════════════════════════════════════════════════════
+   JUST-IN-CASE — dark full-width
+════════════════════════════════════════════════════════════ */
+.jic{
+  background:linear-gradient(150deg,#0d0d12 0%,#1a1635 60%,#0d1a2e 100%);
+  padding:100px 40px;
+  position:relative;overflow:hidden;
+}
+.jic::before,.jic::after{
+  content:'';position:absolute;border-radius:50%;pointer-events:none;
+  filter:blur(120px);
+}
+.jic::before{
+  width:700px;height:700px;top:-300px;right:-200px;
+  background:radial-gradient(circle,rgba(91,79,207,.3),transparent 70%);
+}
+.jic::after{
+  width:500px;height:500px;bottom:-200px;left:-100px;
+  background:radial-gradient(circle,rgba(253,121,168,.2),transparent 70%);
+}
+.jic-inner{max-width:var(--max-w);margin:0 auto;position:relative;z-index:1}
+.jic-top{
+  display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:80px;
+  margin-bottom:64px;
+}
+.jic-left .section-eyebrow{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.jic-left .section-title{color:#fff}
+.jic-left .section-sub{color:rgba(255,255,255,.5);max-width:460px}
+.jic-icon-big{font-size:5rem;animation:pulse 4s ease-in-out infinite;display:block;margin-bottom:8px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.jic-right{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius-xl);padding:32px;
+  backdrop-filter:blur(10px);
+}
+.jic-right h3{color:#fff;font-size:1rem;font-weight:700;margin-bottom:16px}
+.jic-feature{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07);
+}
+.jic-feature:last-child{border-bottom:none;padding-bottom:0}
+.jic-feat-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.jic-feat-text h4{color:rgba(255,255,255,.9);font-size:.88rem;font-weight:700;margin-bottom:2px}
+.jic-feat-text p{color:rgba(255,255,255,.4);font-size:.8rem;line-height:1.55}
+
+.jic-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.jic-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--radius-lg);padding:28px 22px;
+  backdrop-filter:blur(8px);
+  transition:background .3s,transform .3s var(--spring);
+}
+.jic-card:hover{background:rgba(255,255,255,.09);transform:translateY(-4px)}
+.jic-card-icon{font-size:1.6rem;margin-bottom:12px}
+.jic-card h4{color:#fff;font-size:.9rem;font-weight:700;margin-bottom:6px}
+.jic-card p{color:rgba(255,255,255,.42);font-size:.8rem;line-height:1.6}
+
+/* ════════════════════════════════════════════════════════════
+   CTA SECTION
+════════════════════════════════════════════════════════════ */
+.cta-section{
+  padding:100px 40px;
+  background:var(--sheet);
+}
+.cta-box{
+  max-width:760px;margin:0 auto;text-align:center;
+}
+.cta-box .section-title{font-size:clamp(2rem,4vw,3.2rem)}
+.cta-box .section-sub{margin:0 auto 40px;max-width:480px}
+.cta-group{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ════════════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════════════ */
+footer{
+  padding:40px;border-top:1px solid var(--divider);
+}
+.footer-inner{
+  max-width:var(--max-w);margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.footer-logo{
+  font-size:1.1rem;font-weight:800;
+  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:.85rem;color:var(--muted);transition:color .2s}
+.footer-links a:hover{color:var(--accent)}
+.footer-copy{font-size:.82rem;color:var(--muted)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════════════════════════════
+   CAPTURE OVERLAY  (full-screen, desktop-style)
+════════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(8,8,16,.6);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s var(--ease);
+}
+.overlay.open{opacity:1;pointer-events:all}
+
+/* Main capture panel */
+.capture-shell{
+  background:var(--surface);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-lg),0 0 0 1px rgba(0,0,0,.06);
+  width:100%;max-width:960px;
+  max-height:90vh;
+  overflow:hidden;
+  display:grid;grid-template-columns:260px 1fr;
+  transform:scale(.96) translateY(16px);
+  transition:transform .45s var(--spring),opacity .35s var(--ease);
+  opacity:0;
+}
+.overlay.open .capture-shell{transform:scale(1) translateY(0);opacity:1}
+
+/* LEFT SIDEBAR */
+.cap-sidebar{
+  background:var(--sheet);
+  border-right:1px solid var(--divider);
+  display:flex;flex-direction:column;
+  padding:28px 0;
+}
+.cap-sidebar-logo{
+  font-size:1.1rem;font-weight:800;
+  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  padding:0 24px 24px;
+  border-bottom:1px solid var(--divider);
+  margin-bottom:20px;
+}
+.sidebar-steps{padding:0 16px;flex:1}
+.ss-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 12px;border-radius:var(--radius-sm);
+  cursor:default;margin-bottom:4px;
+  transition:background .2s;
+}
+.ss-item.active{background:rgba(91,79,207,.1)}
+.ss-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;
+  background:var(--divider);color:var(--muted);
+  transition:background .3s,color .3s;
+}
+.ss-item.active .ss-num{background:var(--accent-g);color:#fff}
+.ss-item.done .ss-num{background:var(--teal);color:#fff}
+.ss-label{font-size:.85rem;font-weight:600;color:var(--muted);transition:color .2s}
+.ss-item.active .ss-label{color:var(--accent)}
+.ss-item.done .ss-label{color:var(--teal)}
+.ss-connector{
+  width:2px;height:18px;background:var(--divider);
+  margin-left:25px;border-radius:99px;
+  transition:background .3s;
+}
+.ss-connector.done{background:var(--teal)}
+
+/* sidebar footer */
+.cap-sidebar-footer{
+  padding:20px 24px 0;border-top:1px solid var(--divider);margin-top:auto;
+}
+.cap-sidebar-footer p{font-size:.75rem;color:var(--muted);line-height:1.5}
+
+/* RIGHT CONTENT AREA */
+.cap-main{
+  display:flex;flex-direction:column;
+  overflow-y:auto;min-height:0;
+}
+.cap-main::-webkit-scrollbar{width:4px}
+.cap-main::-webkit-scrollbar-track{background:transparent}
+.cap-main::-webkit-scrollbar-thumb{background:var(--divider);border-radius:99px}
+
+.cap-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 28px;border-bottom:1px solid var(--divider);
+  position:sticky;top:0;background:var(--surface);z-index:5;
+}
+.cap-step-label{font-size:1rem;font-weight:700}
+.cap-close{
+  width:34px;height:34px;border-radius:50%;background:var(--sheet);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--muted);
+  transition:background .2s,transform .2s var(--spring);
+}
+.cap-close:hover{background:var(--divider);transform:scale(1.1)}
+
+.cap-body{padding:32px 36px;flex:1}
+
+/* ── STEP 1: Format picker ─────────────────────────────── */
+.fmt-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  margin-top:8px;
+}
+.fmt-card{
+  padding:28px 20px;border-radius:var(--radius-lg);
+  border:2px solid var(--divider);background:var(--sheet);
+  text-align:center;cursor:pointer;
+  transition:all .25s var(--spring);
+}
+.fmt-card:hover{border-color:var(--accent2);background:#f5f3ff;transform:translateY(-3px)}
+.fmt-card.selected{
+  border-color:var(--accent);
+  background:linear-gradient(135deg,rgba(91,79,207,.08),rgba(162,155,254,.06));
+  box-shadow:0 4px 20px rgba(91,79,207,.18);
+  transform:translateY(-3px);
+}
+.fmt-card .fci{font-size:2.2rem;margin-bottom:12px;display:block;transition:transform .25s var(--spring)}
+.fmt-card:hover .fci,.fmt-card.selected .fci{transform:scale(1.12)}
+.fmt-card h3{font-size:.95rem;font-weight:700;margin-bottom:4px}
+.fmt-card p{font-size:.78rem;color:var(--muted)}
+
+/* ── STEP 2: Capture ───────────────────────────────────── */
+.cap-panel{display:none}
+.cap-panel.show{display:block}
+
+/* Video */
+.vid-zone{
+  background:#0d0d12;border-radius:var(--radius-lg);
+  overflow:hidden;position:relative;
+  aspect-ratio:16/9;
+  display:flex;align-items:center;justify-content:center;
+  max-height:320px;
+}
+.vid-zone video{width:100%;height:100%;object-fit:cover}
+.vid-placeholder{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:rgba(255,255,255,.3);font-size:.85rem;
+}
+.vid-placeholder span{font-size:2.8rem}
+
+.cap-controls{
+  display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap;
+}
+.or-divider{
+  display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:.82rem;
+}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--divider)}
+
+.upload-box{
+  border:2px dashed var(--divider);border-radius:var(--radius);
+  padding:24px;text-align:center;cursor:pointer;
+  position:relative;transition:all .2s;
+}
+.upload-box:hover{border-color:var(--accent2);background:#f7f5ff}
+.upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-box .ub-icon{font-size:1.8rem;margin-bottom:8px}
+.upload-box p{font-size:.85rem;color:var(--muted)}
+.upload-box p strong{color:var(--accent)}
+.chosen-file{margin-top:8px;font-size:.75rem;color:var(--teal);font-weight:600;display:none}
+
+/* Audio */
+.audio-area{
+  background:var(--sheet);border-radius:var(--radius-lg);
+  padding:32px 28px;text-align:center;
+}
+.audio-bars{
+  display:flex;align-items:center;justify-content:center;gap:4px;height:64px;margin-bottom:16px;
+}
+.ab{width:5px;border-radius:99px;background:var(--accent2);height:8px;transition:height .12s}
+.audio-bars.live .ab{animation:abar 1.1s ease-in-out infinite}
+.ab:nth-child(1){animation-delay:0s}
+.ab:nth-child(2){animation-delay:.1s}
+.ab:nth-child(3){animation-delay:.2s}
+.ab:nth-child(4){animation-delay:.3s}
+.ab:nth-child(5){animation-delay:.15s}
+.ab:nth-child(6){animation-delay:.25s}
+.ab:nth-child(7){animation-delay:.05s}
+.ab:nth-child(8){animation-delay:.35s}
+.ab:nth-child(9){animation-delay:.18s}
+.ab:nth-child(10){animation-delay:.28s}
+@keyframes abar{0%,100%{height:8px}50%{height:42px}}
+.audio-timer{
+  font-size:2rem;font-weight:700;letter-spacing:.04em;
+  color:var(--ink);font-variant-numeric:tabular-nums;margin-bottom:6px;
+}
+.rec-indicator{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.8rem;color:var(--muted);margin-bottom:20px;
+}
+.rec-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ruby);opacity:0;
+  animation:blink 1s step-start infinite;
+}
+.recording .rec-dot{opacity:1}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Text */
+.text-area-wrap{position:relative}
+#textMsg{
+  width:100%;min-height:220px;padding:20px;resize:none;
+  border:2px solid var(--divider);border-radius:var(--radius-lg);
+  font-size:1.05rem;line-height:1.75;color:var(--ink);
+  background:var(--sheet);font-family:inherit;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+#textMsg:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,79,207,.1);background:#fff}
+#textMsg::placeholder{color:var(--muted)}
+.char-c{position:absolute;bottom:14px;right:16px;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ── STEP 3: Preview ───────────────────────────────────── */
+.preview-wrap{border-radius:var(--radius-lg);overflow:hidden;background:var(--sheet);min-height:120px}
+.preview-wrap video,.preview-wrap audio{width:100%;border-radius:var(--radius-lg)}
+.preview-text{padding:24px;font-size:1rem;line-height:1.75;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+.preview-label{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(91,79,207,.08);color:var(--accent);
+  font-size:.76rem;font-weight:700;padding:4px 12px;border-radius:99px;
+  margin-bottom:16px;
+}
+
+/* ── STEP 4: Actions ───────────────────────────────────── */
+.action-cols{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+}
+.action-tile{
+  padding:20px 18px;border-radius:var(--radius-lg);
+  border:2px solid var(--divider);background:var(--sheet);
+  cursor:pointer;text-align:left;
+  transition:all .25s var(--spring);
+}
+.action-tile:hover{border-color:var(--accent2);background:#f5f3ff;transform:translateY(-2px)}
+.action-tile.selected{
+  border-color:var(--accent);
+  background:linear-gradient(135deg,rgba(91,79,207,.07),rgba(162,155,254,.05));
+}
+.at-icon{font-size:1.5rem;display:block;margin-bottom:8px}
+.at-title{font-size:.9rem;font-weight:700;color:var(--ink);display:block;margin-bottom:3px}
+.at-sub{font-size:.76rem;color:var(--muted);line-height:1.4}
+
+/* Expandable extra fields */
+.extra-fields{
+  overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .4s var(--ease),opacity .35s,margin .3s;
+  margin-top:0;
+}
+.extra-fields.open{max-height:500px;opacity:1;margin-top:20px}
+.ef-row{margin-bottom:12px}
+.ef-label{display:block;font-size:.78rem;font-weight:700;color:var(--ink2);letter-spacing:.02em;margin-bottom:5px}
+.ef-input{
+  width:100%;padding:11px 14px;border-radius:var(--radius-sm);
+  border:1.5px solid var(--divider);font-size:.88rem;color:var(--ink);
+  background:var(--surface);font-family:inherit;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.ef-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,79,207,.1)}
+.ef-input::placeholder{color:var(--muted)}
+.ef-note{font-size:.74rem;color:var(--muted);margin-top:8px;line-height:1.55;display:flex;gap:5px;align-items:flex-start}
+
+.action-err{
+  background:#fff5f5;border:1px solid #fecaca;color:var(--ruby);
+  border-radius:var(--radius-sm);padding:10px 14px;font-size:.82rem;
+  margin-top:14px;display:none;
+}
+
+/* ── CAP NAV BAR ───────────────────────────────────────── */
+.cap-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 36px;
+  border-top:1px solid var(--divider);
+  background:var(--surface);
+  position:sticky;bottom:0;z-index:5;
+}
+.cap-nav.justify-end{justify-content:flex-end}
+.c-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:11px 24px;border-radius:99px;
+  font-size:.9rem;font-weight:700;
+  transition:all .22s var(--spring);
+}
+.c-btn-back{background:var(--sheet);color:var(--ink2);border:1.5px solid var(--divider)}
+.c-btn-back:hover{border-color:var(--accent2);color:var(--accent)}
+.c-btn-primary{
+  background:var(--accent-g);color:#fff;
+  box-shadow:0 4px 18px rgba(91,79,207,.35);
+}
+.c-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(91,79,207,.45)}
+.c-btn-primary:active{transform:scale(.97)}
+.c-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── CAPTURE BUTTONS (record/stop etc) ─────────────────── */
+.cb{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 20px;border-radius:99px;
+  font-size:.85rem;font-weight:600;
+  transition:all .2s var(--spring);
+}
+.cb-primary{background:var(--accent-g);color:#fff;box-shadow:0 4px 14px rgba(91,79,207,.3)}
+.cb-primary:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(91,79,207,.4)}
+.cb-danger{background:#fee2e2;color:var(--ruby)}
+.cb-danger:hover{background:#fecaca}
+.cb-teal{background:rgba(0,184,148,.1);color:var(--teal)}
+.cb-teal:hover{background:rgba(0,184,148,.18)}
+.cb-neutral{background:var(--sheet);color:var(--ink2);border:1.5px solid var(--divider)}
+.cb-neutral:hover{border-color:var(--accent2);color:var(--accent)}
+.cb:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ── SUCCESS ────────────────────────────────────────────── */
+.success-screen{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 40px;text-align:center;
+  min-height:340px;
+}
+.success-ring{
+  width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(0,184,148,.12),rgba(0,184,148,.04));
+  border:2px solid rgba(0,184,148,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin-bottom:22px;
+  animation:popIn .5s var(--spring) both;
+}
+@keyframes popIn{0%{transform:scale(0);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.success-screen h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.success-screen p{color:var(--muted);font-size:.93rem;line-height:1.65;max-width:360px;margin:0 auto}
+.success-chip{
+  display:inline-block;
+  background:rgba(0,184,148,.1);color:var(--teal);
+  font-size:.8rem;font-weight:700;padding:6px 18px;border-radius:99px;margin:16px 0 28px;
+}
+.c-btn-done{
+  background:var(--accent-g);color:#fff;
+  padding:13px 32px;border-radius:99px;font-size:.95rem;font-weight:700;
+  box-shadow:0 4px 20px rgba(91,79,207,.35);
+  transition:all .25s var(--spring);
+}
+.c-btn-done:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(91,79,207,.45)}
+
+/* ════════════════════════════════════════════════════════════
+   UTILITY
+════════════════════════════════════════════════════════════ */
+.hidden{display:none!important}
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.mt16{margin-top:16px}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;text-align:center;gap:48px}
+  .hero-sub{max-width:100%;margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-proof{justify-content:center}
+  .hero-right{display:none}
+  .how-grid{grid-template-columns:1fr}
+  .how-card{border-right:none;border-bottom:1px solid var(--divider)}
+  .how-card:last-child{border-bottom:none}
+  .uc-grid{grid-template-columns:repeat(2,1fr)}
+  .jic-top{grid-template-columns:1fr}
+  .jic-cards{grid-template-columns:1fr}
+  .capture-shell{grid-template-columns:1fr;max-width:600px;max-height:95vh}
+  .cap-sidebar{display:none}
+  .fmt-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .action-cols{grid-template-columns:1fr}
+  .cap-body{padding:22px 20px}
+  .cap-topbar{padding:16px 20px}
+  .cap-nav{padding:16px 20px}
+  nav{padding:0 20px}
+  section{padding:72px 20px}
+  .jic{padding:72px 20px}
+  .cta-section{padding:72px 20px}
+  footer{padding:32px 20px}
+}
+@media(max-width:520px){
+  .uc-grid{grid-template-columns:1fr}
+  .fmt-grid{gap:8px}
+  .fmt-card{padding:20px 12px}
+  .nav-links{display:none}
+  .nav-btn-ghost{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      NAV
-═══════════════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════════ -->
 <nav>
-  <div class="nav-logo">capsule</div>
-  <button class="nav-cta" id="navCta">Start Recording</button>
+  <div class="nav-inner">
+    <div class="nav-logo">capsule</div>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#uses">Use cases</a></li>
+      <li><a href="#jic">Just in case</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="nav-btn-ghost">Sign in</button>
+      <button class="nav-btn-cta" id="navCta">Start Recording</button>
+    </div>
+  </div>
 </nav>
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      HERO
-═══════════════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════════ -->
 <section class="hero" id="hero">
-  <div class="hero-badge">✦ Capture first. Decide later.</div>
-  <h1>Say what <span>matters,</span><br/>when it matters.</h1>
-  <p class="hero-sub">Capture a moment. Decide what to do with it later — send, save, or schedule for the perfect time.</p>
-  <div class="hero-actions">
-    <button class="btn-primary" id="heroCta">
-      <span>⏺</span> Start Recording
-    </button>
-    <a href="#how" class="btn-ghost">See how it works ↓</a>
-  </div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="hero-inner">
 
-  <!-- Decorative phone -->
-  <div class="hero-media">
-    <div class="float-card fc1" style="z-index:2">
-      <div class="icon" style="background:linear-gradient(135deg,#fd79a8,#e17055)">🎥</div>
-      <div>
-        <strong>Video message saved</strong>
-        <span>Just now · Private</span>
+    <!-- Left -->
+    <div class="hero-left">
+      <div class="hero-eyebrow"><span>✦</span> Capture first. Decide later.</div>
+      <h1>Say what <em>matters,</em><br/>when it matters.</h1>
+      <p class="hero-sub">Record a video, voice note, or write a message right now — then choose exactly what happens with it. Send it, save it, or schedule it for the perfect moment.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="heroCta">
+          <span>⏺</span> Start Recording
+        </button>
+        <a href="#how" class="btn-secondary">See how it works ↓</a>
       </div>
-    </div>
-    <div class="phone-mock">
-      <div class="phone-screen">
-        <div class="phone-dot"></div>
-        <div class="phone-label">Recording…</div>
-        <div class="phone-wave">
-          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <div class="hero-proof">
+        <div class="proof-avatars">
+          <span>U</span><span>A</span><span>M</span><span>+</span>
         </div>
-        <div class="phone-label">00:12</div>
+        <div class="proof-text"><strong>Thousands</strong> of messages captured and counting</div>
       </div>
     </div>
-    <div class="float-card fc2" style="z-index:2">
-      <div class="icon" style="background:linear-gradient(135deg,#00b894,#00cec9)">📩</div>
-      <div>
-        <strong>Scheduled for Dec 25</strong>
-        <span>To: mom@email.com</span>
+
+    <!-- Right: browser mockup -->
+    <div class="hero-right">
+      <div class="hero-visual">
+
+        <!-- Floating stat cards -->
+        <div class="stat-card sc1">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#fd79a8,#e17055)">🎥</div>
+          <div>
+            <strong>Video saved</strong>
+            <span>Just now · Private vault</span>
+          </div>
+        </div>
+
+        <div class="stat-card sc2">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#00b894,#00cec9)">📩</div>
+          <div>
+            <strong>Scheduled for Dec 25</strong>
+            <span>→ mom@example.com</span>
+          </div>
+        </div>
+
+        <div class="browser-mock">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <div class="browser-dot bd-red"></div>
+              <div class="browser-dot bd-yellow"></div>
+              <div class="browser-dot bd-green"></div>
+            </div>
+            <div class="browser-url">capsule.app/capture</div>
+          </div>
+          <div class="browser-body">
+            <!-- Mini step indicator -->
+            <div class="mini-steps">
+              <div class="mini-step done"></div>
+              <div class="mini-step done"></div>
+              <div class="mini-step active"></div>
+              <div class="mini-step"></div>
+            </div>
+
+            <div class="capture-preview-card">
+              <div class="cpcard-header">
+                <span class="cpcard-title">🎙 Audio message — 00:42</span>
+                <span class="cpcard-badge">● Recording</span>
+              </div>
+              <div class="cpcard-body">
+                <div class="waveform">
+                  <div class="wf-bar played" style="height:18px"></div>
+                  <div class="wf-bar played" style="height:28px"></div>
+                  <div class="wf-bar played" style="height:38px"></div>
+                  <div class="wf-bar played" style="height:24px"></div>
+                  <div class="wf-bar played" style="height:32px"></div>
+                  <div class="wf-bar played" style="height:20px"></div>
+                  <div class="wf-bar" style="height:36px"></div>
+                  <div class="wf-bar" style="height:26px"></div>
+                  <div class="wf-bar" style="height:18px"></div>
+                  <div class="wf-bar" style="height:30px"></div>
+                  <div class="wf-bar" style="height:40px"></div>
+                  <div class="wf-bar" style="height:22px"></div>
+                  <div class="wf-bar" style="height:28px"></div>
+                  <div class="wf-bar" style="height:16px"></div>
+                </div>
+                <div style="margin-top:14px;display:flex;gap:8px">
+                  <div style="flex:1;height:36px;border-radius:99px;background:var(--accent-g);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:700">⏹ Stop Recording</div>
+                  <div style="width:36px;height:36px;border-radius:50%;background:var(--sheet);display:flex;align-items:center;justify-content:center;font-size:.9rem">↩</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+              <div style="background:var(--sheet);border-radius:var(--radius-sm);padding:10px 12px;border:1px solid var(--divider)">
+                <div style="font-size:.7rem;color:var(--muted)">Next step</div>
+                <div style="font-size:.8rem;font-weight:700;margin-top:2px">Preview & decide</div>
+              </div>
+              <div style="background:#f0fdf9;border-radius:var(--radius-sm);padding:10px 12px;border:1px solid rgba(0,184,148,.2)">
+                <div style="font-size:.7rem;color:var(--teal)">Messages saved</div>
+                <div style="font-size:.8rem;font-weight:700;color:var(--ink);margin-top:2px">12 total</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      HOW IT WORKS
-═══════════════════════════════════════════════════════════ -->
-<section class="section" id="how">
+════════════════════════════════════════════════════════════ -->
+<section id="how">
   <div class="section-inner">
-    <div class="reveal">
-      <div class="section-tag">How it works</div>
-      <h2 class="section-title">Three steps.<br/>One lasting moment.</h2>
-      <p class="section-sub">No accounts. No friction. Just capture, then choose.</p>
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-title" style="max-width:600px;margin:0 auto 14px">Three steps.<br/>One moment, preserved forever.</h2>
+      <p class="section-sub" style="margin:0 auto;text-align:center;max-width:500px">No accounts required. No long forms. Just capture whatever you feel, then decide.</p>
     </div>
-    <div class="steps-grid">
-      <div class="step-card reveal reveal-delay-1">
-        <div class="step-num">1</div>
-        <div class="step-icon">🎬</div>
+    <div class="how-grid" style="margin-top:56px">
+      <div class="how-card reveal rd1">
+        <div class="how-num">1</div>
+        <div class="how-icon">🎬</div>
         <h3>Capture instantly</h3>
-        <p>Record video, audio, or write a message. No forms, no sign-up walls.</p>
+        <p>Hit record — video, voice, or text. No friction, no sign-up walls in the way. Just you and what you want to say.</p>
       </div>
-      <div class="step-card reveal reveal-delay-2">
-        <div class="step-num">2</div>
-        <div class="step-icon">👁</div>
-        <h3>Preview &amp; refine</h3>
-        <p>Watch it back. Retake if needed. Make sure it says exactly what you mean.</p>
+      <div class="how-card reveal rd2">
+        <div class="how-num">2</div>
+        <div class="how-icon">👁</div>
+        <h3>Review & preview</h3>
+        <p>Watch or read it back. Retake if it's not quite right. Make sure every word lands exactly as you meant it.</p>
       </div>
-      <div class="step-card reveal reveal-delay-3">
-        <div class="step-num">3</div>
-        <div class="step-icon">✨</div>
-        <h3>Decide what happens</h3>
-        <p>Save privately, send now, schedule it, or set a just-in-case delivery.</p>
+      <div class="how-card reveal rd3">
+        <div class="how-num">3</div>
+        <div class="how-icon">✨</div>
+        <h3>Choose what happens</h3>
+        <p>Save privately, send it now, schedule for a future date, or set a just-in-case delivery — the choice is always yours.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      USE CASES
-═══════════════════════════════════════════════════════════ -->
-<section class="section features-bg">
+════════════════════════════════════════════════════════════ -->
+<section id="uses" style="background:var(--sheet)">
   <div class="section-inner">
     <div class="reveal">
-      <div class="section-tag">Made for moments</div>
-      <h2 class="section-title">Every message<br/>has a purpose.</h2>
+      <div class="section-eyebrow">Made for moments</div>
+      <h2 class="section-title">Every message<br/>has its moment.</h2>
+      <p class="section-sub">From celebrations to confessions — Capsule makes sure the right words reach the right person at the right time.</p>
     </div>
-    <div class="use-cases">
-      <div class="uc-card reveal reveal-delay-1">
+    <div class="uc-grid" style="margin-top:52px">
+      <div class="uc-card reveal rd1">
         <div class="uc-emoji">🎂</div>
         <h4>Birthday messages</h4>
-        <p>Record now, deliver on the exact day — even months in advance.</p>
+        <p>Record it today, schedule delivery on their exact birthday — even months away.</p>
       </div>
-      <div class="uc-card reveal reveal-delay-2">
+      <div class="uc-card reveal rd2">
         <div class="uc-emoji">💌</div>
         <h4>Letters to loved ones</h4>
-        <p>Capture feelings you might struggle to say out loud.</p>
+        <p>Say the things you mean but sometimes struggle to find words for in person.</p>
       </div>
-      <div class="uc-card reveal reveal-delay-3">
+      <div class="uc-card reveal rd3">
         <div class="uc-emoji">🎓</div>
         <h4>Milestone notes</h4>
-        <p>For graduations, new chapters — delivered right when it counts.</p>
+        <p>Graduations, new chapters, first days — delivered right when it means the most.</p>
       </div>
-      <div class="uc-card reveal">
+      <div class="uc-card reveal rd4">
         <div class="uc-emoji">🤫</div>
-        <h4>Private vault</h4>
-        <p>Some things are just for you. Save it privately, revisit whenever.</p>
+        <h4>Private thoughts</h4>
+        <p>A journal you can speak aloud. Saved privately, just for you, whenever you need it.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════════
-     JUST IN CASE — emotional section
-═══════════════════════════════════════════════════════════ -->
-<section class="jic-section">
+<!-- ════════════════════════════════════════════════════════════
+     JUST IN CASE
+════════════════════════════════════════════════════════════ -->
+<div class="jic" id="jic">
   <div class="jic-inner">
-    <div class="jic-icon">🛟</div>
-    <div class="section-tag">For moments you can't predict</div>
-    <h2 class="section-title">Some messages are meant<br/>to be heard, no matter what.</h2>
-    <p class="section-sub">
-      Choose to have a message delivered if your account becomes inactive for a long time.
-      A quiet way to make sure the people you love hear what you need them to hear.
-    </p>
+    <div class="jic-top">
+      <div class="jic-left reveal">
+        <div class="section-eyebrow">For moments you can't predict</div>
+        <h2 class="section-title">Some messages are meant to be heard,<br/>no matter what.</h2>
+        <p class="section-sub">Choose to have a message delivered if your account becomes inactive for a long time. A quiet way to make sure the people you love hear what they need to hear — whenever that moment comes.</p>
+      </div>
+      <div class="jic-right reveal rd2">
+        <span class="jic-icon-big">🛟</span>
+        <h3>How just-in-case delivery works</h3>
+        <div class="jic-feature">
+          <div class="jic-feat-icon">🔒</div>
+          <div class="jic-feat-text">
+            <h4>Sealed until needed</h4>
+            <p>Your message stays completely private — only released if the moment comes.</p>
+          </div>
+        </div>
+        <div class="jic-feature">
+          <div class="jic-feat-icon">🤝</div>
+          <div class="jic-feat-text">
+            <h4>Trusted contacts</h4>
+            <p>You choose 1–2 people. They receive it only when the account has been inactive for an extended period.</p>
+          </div>
+        </div>
+        <div class="jic-feature">
+          <div class="jic-feat-icon">✍️</div>
+          <div class="jic-feat-text">
+            <h4>Your words, your format</h4>
+            <p>Video, voice, or text — delivered exactly as you recorded it, nothing altered.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="jic-cards">
-      <div class="jic-card reveal reveal-delay-1">
-        <div class="jic-card-icon">🔒</div>
-        <h4>Private until needed</h4>
-        <p>Your message stays sealed — only delivered if the moment comes.</p>
+      <div class="jic-card reveal rd1">
+        <div class="jic-card-icon">💬</div>
+        <h4>Final words of love</h4>
+        <p>Tell the people closest to you everything they deserve to hear.</p>
       </div>
-      <div class="jic-card reveal reveal-delay-2">
-        <div class="jic-card-icon">🤝</div>
-        <h4>Trusted contacts</h4>
-        <p>Choose 1–2 people. They receive it only when you've been inactive.</p>
+      <div class="jic-card reveal rd2">
+        <div class="jic-card-icon">📋</div>
+        <h4>Practical guidance</h4>
+        <p>Instructions, wishes, and important context — delivered when truly needed.</p>
       </div>
-      <div class="jic-card reveal reveal-delay-3">
-        <div class="jic-card-icon">✍️</div>
-        <h4>Your words, your way</h4>
-        <p>Video, audio, or text — delivered exactly as you intended.</p>
+      <div class="jic-card reveal rd3">
+        <div class="jic-card-icon">🌅</div>
+        <h4>A piece of yourself</h4>
+        <p>Stories, laughter, memories. Something to hold on to.</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     CTA SECTION
+════════════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-box reveal">
+    <div class="section-eyebrow">Start now — it's free</div>
+    <h2 class="section-title">Ready to capture<br/>something meaningful?</h2>
+    <p class="section-sub">No account needed to get started. Record your first message in under a minute.</p>
+    <div class="cta-group">
+      <button class="btn-primary" id="ctaBottom"><span>⏺</span> Start Recording Now</button>
+      <button class="btn-secondary">Learn more →</button>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      FOOTER
-═══════════════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════════ -->
 <footer>
-  <p>Made with care by <strong>Capsule</strong> · Say what matters, when it matters.</p>
-  <p style="margin-top:8px">© 2025 Capsule. All rights reserved.</p>
+  <div class="footer-inner">
+    <div class="footer-logo">capsule</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-copy">© 2025 Capsule. Say what matters, when it matters.</div>
+  </div>
 </footer>
 
 
-<!-- ═══════════════════════════════════════════════════════════
-     MODAL
-═══════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modal" role="dialog" aria-modal="true">
+<!-- ════════════════════════════════════════════════════════════
+     CAPTURE OVERLAY
+════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="overlay">
+  <div class="capture-shell">
 
-    <!-- Handle -->
-    <div class="modal-handle"></div>
-
-    <!-- Header -->
-    <div class="modal-header">
-      <span class="modal-title" id="modalTitle">Choose format</span>
-      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
-    </div>
-
-    <!-- Progress dots -->
-    <div class="step-progress" id="stepProgress">
-      <div class="sp-dot" id="sp1"></div>
-      <div class="sp-dot" id="sp2"></div>
-      <div class="sp-dot" id="sp3"></div>
-      <div class="sp-dot" id="sp4"></div>
-    </div>
-
-    <!-- ────────────────────────────────────────
-         STEP 1: FORMAT
-    ──────────────────────────────────────── -->
-    <div class="step-view" id="step1">
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:4px">What kind of message?</p>
-      <div class="format-grid">
-        <button class="fmt-btn selected" data-fmt="video" id="fmtVideo">
-          <span class="fmt-icon">🎥</span>
-          <span>Video</span>
-        </button>
-        <button class="fmt-btn" data-fmt="audio" id="fmtAudio">
-          <span class="fmt-icon">🎙</span>
-          <span>Audio</span>
-        </button>
-        <button class="fmt-btn" data-fmt="text" id="fmtText">
-          <span class="fmt-icon">✍️</span>
-          <span>Text</span>
-        </button>
+    <!-- ── SIDEBAR ────────────────────────────────────── -->
+    <div class="cap-sidebar">
+      <div class="cap-sidebar-logo">capsule</div>
+      <div class="sidebar-steps">
+        <!-- Step 1 -->
+        <div class="ss-item active" id="ss1">
+          <div class="ss-num">1</div>
+          <div class="ss-label">Choose format</div>
+        </div>
+        <div class="ss-connector" id="sc1"></div>
+        <!-- Step 2 -->
+        <div class="ss-item" id="ss2">
+          <div class="ss-num">2</div>
+          <div class="ss-label">Capture</div>
+        </div>
+        <div class="ss-connector" id="sc2"></div>
+        <!-- Step 3 -->
+        <div class="ss-item" id="ss3">
+          <div class="ss-num">3</div>
+          <div class="ss-label">Preview</div>
+        </div>
+        <div class="ss-connector" id="sc3"></div>
+        <!-- Step 4 -->
+        <div class="ss-item" id="ss4">
+          <div class="ss-num">4</div>
+          <div class="ss-label">What next?</div>
+        </div>
+      </div>
+      <div class="cap-sidebar-footer">
+        <p>Your message is private by default.<br/>Nothing is shared without your choice.</p>
       </div>
     </div>
-    <div class="step-nav" id="nav1">
-      <button class="btn-next" id="toStep2">Continue →</button>
-    </div>
 
-    <!-- ────────────────────────────────────────
-         STEP 2: CAPTURE
-    ──────────────────────────────────────── -->
-    <div class="step-view" id="step2">
+    <!-- ── MAIN AREA ──────────────────────────────────── -->
+    <div class="cap-main" id="capMain">
 
-      <!-- VIDEO panel -->
-      <div class="capture-panel active" id="panelVideo">
-        <div class="video-preview-box" id="videoBox">
-          <div class="video-placeholder" id="videoPlaceholder">
-            <span>🎥</span>
-            <p>Camera will appear here</p>
+      <!-- Top bar -->
+      <div class="cap-topbar">
+        <span class="cap-step-label" id="capStepLabel">Choose your format</span>
+        <button class="cap-close" id="capClose">✕</button>
+      </div>
+
+      <!-- ── STEP 1 ─────────────────────────────────── -->
+      <div class="cap-body" id="view1">
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:20px">What kind of message do you want to create?</p>
+        <div class="fmt-grid">
+          <div class="fmt-card selected" data-fmt="video">
+            <span class="fci">🎥</span>
+            <h3>Video</h3>
+            <p>Record or upload a video message</p>
           </div>
-          <video id="videoLive" autoplay muted playsinline style="display:none"></video>
-          <video id="videoPlayback" controls style="display:none"></video>
+          <div class="fmt-card" data-fmt="audio">
+            <span class="fci">🎙</span>
+            <h3>Audio</h3>
+            <p>Voice note or uploaded audio</p>
+          </div>
+          <div class="fmt-card" data-fmt="text">
+            <span class="fci">✍️</span>
+            <h3>Text</h3>
+            <p>Write a personal message</p>
+          </div>
         </div>
-        <div class="cam-controls" id="camControls">
-          <button class="cap-btn cap-btn-primary" id="startCam">▶ Start Camera</button>
-          <button class="cap-btn cap-btn-danger hidden" id="startRec">⏺ Record</button>
-          <button class="cap-btn cap-btn-teal hidden" id="stopRec">⏹ Stop</button>
-          <button class="cap-btn cap-btn-neutral hidden" id="retakeVideo">↩ Retake</button>
+      </div>
+      <div class="cap-nav justify-end" id="nav1">
+        <button class="c-btn c-btn-primary" id="toStep2">Continue →</button>
+      </div>
+
+      <!-- ── STEP 2 ─────────────────────────────────── -->
+      <div class="cap-body hidden" id="view2">
+
+        <!-- VIDEO -->
+        <div class="cap-panel" id="panelVideo">
+          <div class="vid-zone" id="vidZone">
+            <div class="vid-placeholder" id="vidPlaceholder"><span>🎥</span><p>Camera preview will appear here</p></div>
+            <video id="vidLive" autoplay muted playsinline style="display:none;width:100%;height:100%;object-fit:cover"></video>
+            <video id="vidPlayback" controls style="display:none;width:100%;height:100%;object-fit:cover"></video>
+          </div>
+          <div class="cap-controls" id="vidBtns">
+            <button class="cb cb-primary" id="btnStartCam">▶ Open Camera</button>
+            <button class="cb cb-danger hidden" id="btnRec">⏺ Start Recording</button>
+            <button class="cb cb-teal hidden" id="btnStopRec">⏹ Stop</button>
+            <button class="cb cb-neutral hidden" id="btnRetakeVid">↩ Retake</button>
+          </div>
+          <div class="or-divider"><span>or upload a file</span></div>
+          <div class="upload-box">
+            <input type="file" id="vidFile" accept="video/*"/>
+            <div class="ub-icon">📁</div>
+            <p><strong>Click to upload</strong> a video — MP4, MOV, WebM</p>
+            <div class="chosen-file" id="vidChosen"></div>
+          </div>
         </div>
-        <div class="upload-zone" id="videoUploadZone" style="margin-top:12px">
-          <input type="file" id="videoFileInput" accept="video/*"/>
-          <div class="uz-icon">📁</div>
-          <p><strong>Or upload a video</strong> — MP4, MOV, WebM</p>
-          <div class="upload-chosen" id="videoChosen"></div>
+
+        <!-- AUDIO -->
+        <div class="cap-panel" id="panelAudio">
+          <div class="audio-area" id="audioArea">
+            <div class="audio-bars" id="audioBars">
+              <div class="ab"></div><div class="ab"></div><div class="ab"></div>
+              <div class="ab"></div><div class="ab"></div><div class="ab"></div>
+              <div class="ab"></div><div class="ab"></div><div class="ab"></div><div class="ab"></div>
+            </div>
+            <div class="audio-timer" id="audioTimer">00:00</div>
+            <div class="rec-indicator" id="recIndicator">
+              <div class="rec-dot"></div>
+              <span id="recStatus">Ready to record</span>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+              <button class="cb cb-primary" id="btnAudioRec">🎙 Start Recording</button>
+              <button class="cb cb-teal hidden" id="btnAudioStop">⏹ Stop</button>
+              <button class="cb cb-neutral hidden" id="btnAudioRetake">↩ Retake</button>
+            </div>
+          </div>
+          <audio id="audioPlayback" controls style="display:none;width:100%;margin-top:16px;border-radius:12px"></audio>
+          <div class="or-divider" style="margin-top:20px"><span>or upload audio</span></div>
+          <div class="upload-box">
+            <input type="file" id="audioFile" accept="audio/*"/>
+            <div class="ub-icon">🎵</div>
+            <p><strong>Click to upload</strong> audio — MP3, WAV, M4A</p>
+            <div class="chosen-file" id="audioChosen"></div>
+          </div>
+        </div>
+
+        <!-- TEXT -->
+        <div class="cap-panel" id="panelText">
+          <p style="font-size:.88rem;color:var(--muted);margin-bottom:14px">Write freely — you can decide what to do with it after.</p>
+          <div class="text-area-wrap">
+            <textarea id="textMsg" placeholder="Start writing your message here…&#10;&#10;Let it be unfiltered and honest. You'll choose what happens to it next."></textarea>
+            <div class="char-c" id="charCount">0</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="cap-nav hidden" id="nav2">
+        <button class="c-btn c-btn-back" id="toStep1">← Back</button>
+        <button class="c-btn c-btn-primary" id="toStep3">Preview →</button>
+      </div>
+
+      <!-- ── STEP 3 ─────────────────────────────────── -->
+      <div class="cap-body hidden" id="view3">
+        <div class="preview-label" id="previewLabel">🎥 Video message</div>
+        <div class="preview-wrap" id="previewWrap">
+          <div style="padding:40px;text-align:center;color:var(--muted);font-size:.9rem">Nothing captured yet.</div>
+        </div>
+      </div>
+      <div class="cap-nav hidden" id="nav3">
+        <button class="c-btn c-btn-back" id="toStep2b">← Retake</button>
+        <button class="c-btn c-btn-primary" id="toStep4">Looks good →</button>
+      </div>
+
+      <!-- ── STEP 4 ─────────────────────────────────── -->
+      <div class="cap-body hidden" id="view4">
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:16px">What would you like to do with this message?</p>
+        <div class="action-cols">
+
+          <!-- Save privately -->
+          <div class="action-tile selected" data-action="private">
+            <span class="at-icon">🔒</span>
+            <span class="at-title">Save privately</span>
+            <span class="at-sub">Only you can access this. No one else is notified.</span>
+          </div>
+
+          <!-- Send now -->
+          <div class="action-tile" data-action="send">
+            <span class="at-icon">📩</span>
+            <span class="at-title">Send now</span>
+            <span class="at-sub">Deliver to someone's email right away.</span>
+          </div>
+
+          <!-- Schedule -->
+          <div class="action-tile" data-action="schedule">
+            <span class="at-icon">⏳</span>
+            <span class="at-title">Schedule for later</span>
+            <span class="at-sub">Pick a date and time. We'll deliver it then.</span>
+          </div>
+
+          <!-- Just in case -->
+          <div class="action-tile" data-action="jic">
+            <span class="at-icon">🛟</span>
+            <span class="at-title">Just in case</span>
+            <span class="at-sub">Delivered to trusted contacts if your account becomes inactive.</span>
+          </div>
+
+        </div>
+
+        <!-- Extra: Send now -->
+        <div class="extra-fields" id="xSend">
+          <div class="ef-row">
+            <label class="ef-label">📧 Recipient email</label>
+            <input class="ef-input" type="email" id="sendEmail" placeholder="recipient@example.com"/>
+          </div>
+        </div>
+
+        <!-- Extra: Schedule -->
+        <div class="extra-fields" id="xSchedule">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="ef-row">
+              <label class="ef-label">📧 Recipient email</label>
+              <input class="ef-input" type="email" id="schedEmail" placeholder="recipient@example.com"/>
+            </div>
+            <div class="ef-row">
+              <label class="ef-label">📅 Deliver on</label>
+              <input class="ef-input" type="datetime-local" id="schedDate"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extra: Just in case -->
+        <div class="extra-fields" id="xJic">
+          <div class="ef-note" style="background:rgba(253,121,168,.06);border:1px solid rgba(253,121,168,.15);padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:12px">
+            <span>🛟</span>
+            <span>This message will be delivered to your trusted contacts if your account becomes inactive for an extended period of time.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="ef-row">
+              <label class="ef-label">Trusted contact 1</label>
+              <input class="ef-input" type="email" id="jicE1" placeholder="trusted@example.com"/>
+            </div>
+            <div class="ef-row">
+              <label class="ef-label">Trusted contact 2 <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+              <input class="ef-input" type="email" id="jicE2" placeholder="another@example.com"/>
+            </div>
+          </div>
+          <div class="ef-row mt12">
+            <label class="ef-label">Note for them <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <textarea class="ef-input" id="jicNote" rows="2"
+              style="resize:none;font-family:inherit;font-size:.85rem;min-height:72px"
+              placeholder="A brief note they'll see alongside the message…"></textarea>
+          </div>
+        </div>
+
+        <div class="action-err" id="actionErr"></div>
+      </div>
+      <div class="cap-nav hidden" id="nav4">
+        <button class="c-btn c-btn-back" id="toStep3b">← Back</button>
+        <button class="c-btn c-btn-primary" id="btnSubmit">Save message ✓</button>
+      </div>
+
+      <!-- ── SUCCESS ─────────────────────────────────── -->
+      <div class="hidden" id="viewSuccess">
+        <div class="success-screen">
+          <div class="success-ring">✓</div>
+          <h2 id="successTitle">Your message has been saved.</h2>
+          <p id="successSub">It's safely stored and will be handled exactly as you chose.</p>
+          <div class="success-chip" id="successChip">🔒 Saved privately</div>
+          <button class="c-btn-done" id="btnDone">Create another →</button>
         </div>
       </div>
 
-      <!-- AUDIO panel -->
-      <div class="capture-panel" id="panelAudio">
-        <div class="audio-viz" id="audioViz">
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div>
-        </div>
-        <div class="rec-timer" id="audioTimerWrap">
-          <span class="rec-dot" id="recDot"></span>
-          <span id="audioTimer">00:00</span>
-        </div>
-        <div class="cam-controls" style="justify-content:center;margin-top:16px">
-          <button class="cap-btn cap-btn-primary" id="startAudioRec">🎙 Start Recording</button>
-          <button class="cap-btn cap-btn-teal hidden" id="stopAudioRec">⏹ Stop</button>
-          <button class="cap-btn cap-btn-neutral hidden" id="retakeAudio">↩ Retake</button>
-        </div>
-        <audio id="audioPlayback" controls style="display:none;width:100%;margin-top:14px;border-radius:12px"></audio>
-        <div class="upload-zone" style="margin-top:14px">
-          <input type="file" id="audioFileInput" accept="audio/*"/>
-          <div class="uz-icon">🎵</div>
-          <p><strong>Or upload audio</strong> — MP3, WAV, M4A</p>
-          <div class="upload-chosen" id="audioChosen"></div>
-        </div>
-      </div>
-
-      <!-- TEXT panel -->
-      <div class="capture-panel" id="panelText">
-        <div class="text-capture-wrap">
-          <textarea id="textMessage" placeholder="Start writing your message…
-&#10;Let it be unfiltered. You can decide what to do with it after."></textarea>
-          <div class="char-count" id="charCount">0</div>
-        </div>
-      </div>
-
-    </div><!-- /step2 -->
-    <div class="step-nav spread" id="nav2">
-      <button class="btn-back" id="toStep1">← Back</button>
-      <button class="btn-next" id="toStep3">Preview →</button>
-    </div>
-
-    <!-- ────────────────────────────────────────
-         STEP 3: PREVIEW
-    ──────────────────────────────────────── -->
-    <div class="step-view" id="step3">
-      <div class="preview-badge" id="previewBadge">🎥 Video message</div>
-      <div class="preview-box" id="previewBox">
-        <!-- dynamically populated -->
-        <div class="empty-state">
-          <span>🎬</span>
-          <p>No message yet — start capturing something meaningful.</p>
-        </div>
-      </div>
-    </div>
-    <div class="step-nav spread" id="nav3">
-      <button class="btn-back" id="toStep2b">← Retake</button>
-      <button class="btn-next" id="toStep4">Looks good →</button>
-    </div>
-
-    <!-- ────────────────────────────────────────
-         STEP 4: ACTION SELECTION
-    ──────────────────────────────────────── -->
-    <div class="step-view" id="step4">
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">What do you want to do with this?</p>
-      <div class="action-grid">
-
-        <!-- Save privately -->
-        <div class="action-card selected" data-action="private" id="actPrivate">
-          <span class="ac-icon">🔒</span>
-          <span class="ac-title">Save privately</span>
-          <span class="ac-sub">Only you can access this</span>
-        </div>
-
-        <!-- Send now -->
-        <div class="action-card" data-action="send" id="actSend">
-          <span class="ac-icon">📩</span>
-          <span class="ac-title">Send now</span>
-          <span class="ac-sub">Deliver to someone's inbox</span>
-        </div>
-
-        <!-- Schedule -->
-        <div class="action-card" data-action="schedule" id="actSchedule">
-          <span class="ac-icon">⏳</span>
-          <span class="ac-title">Schedule</span>
-          <span class="ac-sub">Deliver on a specific date</span>
-        </div>
-
-        <!-- Just in case -->
-        <div class="action-card" data-action="jic" id="actJic">
-          <span class="ac-icon">🛟</span>
-          <span class="ac-title">Just in case</span>
-          <span class="ac-sub">Delivered if account inactive</span>
-        </div>
-      </div>
-
-      <!-- Extra fields: Send now -->
-      <div class="action-extra" id="extraSend">
-        <div class="divider"></div>
-        <div class="field-group">
-          <label class="field-label">📧 Recipient email</label>
-          <input class="field-input" type="email" id="sendEmail" placeholder="recipient@example.com"/>
-        </div>
-      </div>
-
-      <!-- Extra fields: Schedule -->
-      <div class="action-extra" id="extraSchedule">
-        <div class="divider"></div>
-        <div class="field-group">
-          <label class="field-label">📧 Recipient email</label>
-          <input class="field-input" type="email" id="schedEmail" placeholder="recipient@example.com"/>
-        </div>
-        <div class="field-group" style="margin-top:12px">
-          <label class="field-label">📅 Deliver on</label>
-          <input class="field-input" type="datetime-local" id="schedDate"/>
-        </div>
-      </div>
-
-      <!-- Extra fields: Just in case -->
-      <div class="action-extra" id="extraJic">
-        <div class="divider"></div>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.6">
-          🛟 This message will be delivered if your account becomes inactive for a long time.
-          Choose 1–2 people you trust completely.
-        </p>
-        <div class="field-group">
-          <label class="field-label">Trusted contact 1</label>
-          <input class="field-input" type="email" id="jicEmail1" placeholder="trusted@example.com"/>
-        </div>
-        <div class="field-group" style="margin-top:10px">
-          <label class="field-label">Trusted contact 2 <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <input class="field-input" type="email" id="jicEmail2" placeholder="another@example.com"/>
-        </div>
-        <div class="field-group" style="margin-top:10px">
-          <label class="field-label">Note for them <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <textarea class="field-input" id="jicNote" rows="2"
-            placeholder="Add a brief note they'll see alongside the message…"
-            style="resize:none;min-height:70px;font-family:inherit;font-size:.875rem"></textarea>
-        </div>
-      </div>
-
-      <div id="actionError" style="display:none;color:var(--ruby);font-size:.82rem;margin-top:12px;padding:10px 14px;background:#fff5f5;border-radius:10px;border:1px solid #fecaca"></div>
-    </div>
-    <div class="step-nav spread" id="nav4">
-      <button class="btn-back" id="toStep3b">← Back</button>
-      <button class="btn-next" id="submitAction">Save message ✓</button>
-    </div>
-
-    <!-- ────────────────────────────────────────
-         SUCCESS
-    ──────────────────────────────────────── -->
-    <div class="step-view" id="stepSuccess">
-      <div class="success-view">
-        <div class="success-anim">✓</div>
-        <h2 id="successTitle">Your message has been saved.</h2>
-        <p id="successSub">It's safely stored and will be handled exactly as you chose.</p>
-        <div class="success-pill" id="successPill">🔒 Saved privately</div>
-        <br/>
-        <button class="btn-done" id="btnDone">Create another →</button>
-      </div>
-    </div>
-
-  </div><!-- /modal -->
+    </div><!-- /cap-main -->
+  </div><!-- /capture-shell -->
 </div><!-- /overlay -->
 
 
-<!-- ═══════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════════════════════════
      JAVASCRIPT
-═══════════════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════════ -->
 <script>
-/* ──────────────────────────────────────────────────────────
-   STATE
-────────────────────────────────────────────────────────── */
-const state = {
-  step:       1,        // 1–4 + success
-  format:     'video',  // 'video' | 'audio' | 'text'
-  action:     'private',// 'private' | 'send' | 'schedule' | 'jic'
-  // media
-  videoBlob:  null,
-  videoURL:   null,
-  audioBlob:  null,
-  audioURL:   null,
-  textContent:'',
-  // recording
-  mediaStream: null,
-  mediaRecorder: null,
-  recordChunks: [],
-  isRecording: false,
-  timerInterval: null,
-  elapsedSec: 0,
+/* ── Helpers ─────────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+const fmtTime = s => `${pad(Math.floor(s/60))}:${pad(s%60)}`;
+const revoke = url => { if(url && url.startsWith('blob:')) URL.revokeObjectURL(url) };
+
+/* ── State ───────────────────────────────────────────────────── */
+const S = {
+  step: 1,
+  format: 'video',
+  action: 'private',
+  videoBlob: null, videoURL: null,
+  audioBlob: null, audioURL: null,
+  text: '',
+  stream: null,
+  recorder: null,
+  chunks: [],
+  recording: false,
+  audioSec: 0,
+  audioInterval: null,
 };
 
-/* ──────────────────────────────────────────────────────────
-   HELPERS
-────────────────────────────────────────────────────────── */
-const $ = id => document.getElementById(id);
-function fmt2(n){ return String(n).padStart(2,'0') }
-function formatTime(s){ return `${fmt2(Math.floor(s/60))}:${fmt2(s%60)}` }
-
-// Revoke previous object URLs to avoid memory leaks
-function revokeURL(url){ if(url && url.startsWith('blob:')) URL.revokeObjectURL(url) }
-
-/* ──────────────────────────────────────────────────────────
-   MODAL OPEN / CLOSE
-────────────────────────────────────────────────────────── */
-const overlay = $('modalOverlay');
-function openModal(){
+/* ── Open / Close ────────────────────────────────────────────── */
+const overlay = $('overlay');
+function openOverlay(){
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
   showStep(1);
 }
-function closeModal(){
+function closeOverlay(){
   overlay.classList.remove('open');
   document.body.style.overflow = '';
   stopAllMedia();
 }
+['heroCta','navCta','ctaBottom'].forEach(id => $(id).addEventListener('click', openOverlay));
+$('capClose').addEventListener('click', closeOverlay);
+overlay.addEventListener('click', e => { if(e.target === overlay) closeOverlay() });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeOverlay() });
 
-['heroCta','navCta'].forEach(id => $(id).addEventListener('click', openModal));
-$('modalClose').addEventListener('click', closeModal);
-overlay.addEventListener('click', e => { if(e.target === overlay) closeModal() });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal() });
-
-/* ──────────────────────────────────────────────────────────
-   STEP TRANSITIONS
-────────────────────────────────────────────────────────── */
-const stepIds    = ['step1','step2','step3','step4','stepSuccess'];
-const navIds     = ['nav1','nav2','nav3','nav4'];
-const stepTitles = ['Choose format','Capture','Preview','What next?','Done!'];
-const spDots     = ['sp1','sp2','sp3','sp4'];
-
-function showStep(n){
-  state.step = n;
-
-  // Progress dots
-  spDots.forEach((id, i) => {
-    const el = $(id);
+/* ── Sidebar + step labels ───────────────────────────────────── */
+const stepTitles = ['Choose your format','Capture your message','Preview','What do you want to do?','Done'];
+function updateSidebar(n){
+  [1,2,3,4].forEach(i => {
+    const el = $('ss'+i);
     el.classList.remove('active','done');
-    if(i < n - 1)       el.classList.add('done');
-    else if(i === n - 1) el.classList.add('active');
-  });
-
-  // Hide progress on success
-  $('stepProgress').style.display = (n > 4) ? 'none' : 'flex';
-
-  // Animate views
-  stepIds.forEach((id, i) => {
-    const el = $(id);
-    const target = i + 1; // step numbers are 1-indexed; success = 5
-    if(n === 5 && id === 'stepSuccess'){
-      el.style.display = 'block';
-      requestAnimationFrame(() => el.classList.add('visible'));
-    } else if(n === target){
-      el.style.display = 'block';
-      requestAnimationFrame(() => { el.classList.remove('exit-left'); el.classList.add('visible') });
-    } else {
-      el.classList.remove('visible');
-      el.classList.add('exit-left');
-      setTimeout(() => { el.style.display = 'none'; el.classList.remove('exit-left') }, 350);
+    const conn = $('sc'+i);
+    if(conn) conn.classList.remove('done');
+    if(i < n){
+      el.classList.add('done');
+      if(conn) conn.classList.add('done');
+    } else if(i === n){
+      el.classList.add('active');
     }
   });
-
-  // Nav bars
-  navIds.forEach((id, i) => {
-    $(id).style.display = (n === i + 1) ? 'flex' : 'none';
-  });
-
-  // Title
-  $('modalTitle').textContent = stepTitles[Math.min(n, stepTitles.length) - 1];
+  $('capStepLabel').textContent = stepTitles[Math.min(n,5)-1];
 }
 
-/* ──────────────────────────────────────────────────────────
-   STEP 1: FORMAT SELECTION
-────────────────────────────────────────────────────────── */
-document.querySelectorAll('.fmt-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    state.format = btn.dataset.fmt;
+/* ── View switching ──────────────────────────────────────────── */
+const views = ['view1','view2','view3','view4','viewSuccess'];
+const navs  = ['nav1','nav2','nav3','nav4'];
+
+function showStep(n){
+  S.step = n;
+  updateSidebar(n);
+  // Hide all views & navs
+  views.forEach(v => $(v).classList.add('hidden'));
+  navs.forEach(v => $(v).classList.add('hidden'));
+  // Show current
+  if(n <= 4){
+    $(`view${n}`).classList.remove('hidden');
+    $(`nav${n}`).classList.remove('hidden');
+  } else {
+    $('viewSuccess').classList.remove('hidden');
+  }
+  $('capMain').scrollTop = 0;
+}
+
+/* ── STEP 1: Format ──────────────────────────────────────────── */
+document.querySelectorAll('.fmt-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.fmt-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    S.format = card.dataset.fmt;
   });
 });
 
 $('toStep2').addEventListener('click', () => {
   // Show correct capture panel
-  ['panelVideo','panelAudio','panelText'].forEach(id => {
-    $(id).classList.remove('active');
-    $(id).style.display = 'none';
+  ['panelVideo','panelAudio','panelText'].forEach(p => {
+    const el = $(p); el.classList.remove('show'); el.style.display = 'none';
   });
-  const panelMap = { video:'panelVideo', audio:'panelAudio', text:'panelText' };
-  const panel = $(panelMap[state.format]);
+  const map = {video:'panelVideo', audio:'panelAudio', text:'panelText'};
+  const panel = $(map[S.format]);
   panel.style.display = 'block';
-  panel.classList.add('active');
+  panel.classList.add('show');
   showStep(2);
 });
 
-/* ──────────────────────────────────────────────────────────
-   STEP 2: VIDEO CAPTURE
-────────────────────────────────────────────────────────── */
-$('startCam').addEventListener('click', async () => {
+/* ── STEP 2: Video ───────────────────────────────────────────── */
+$('btnStartCam').addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
-    state.mediaStream = stream;
-    const live = $('videoLive');
-    live.srcObject = stream;
-    live.style.display = 'block';
-    $('videoPlaceholder').style.display = 'none';
-    $('videoPlayback').style.display = 'none';
-    $('startCam').classList.add('hidden');
-    $('startRec').classList.remove('hidden');
-  } catch(err){
-    alert('Camera access denied. Please allow camera permissions and try again.');
-  }
+    const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+    S.stream = stream;
+    const v = $('vidLive');
+    v.srcObject = stream; v.style.display = 'block';
+    $('vidPlaceholder').style.display = 'none';
+    $('vidPlayback').style.display = 'none';
+    $('btnStartCam').classList.add('hidden');
+    $('btnRec').classList.remove('hidden');
+  } catch(e){ alert('Camera/mic access denied. Please allow permissions.') }
 });
 
-$('startRec').addEventListener('click', () => {
-  state.recordChunks = [];
-  state.mediaRecorder = new MediaRecorder(state.mediaStream);
-  state.mediaRecorder.ondataavailable = e => { if(e.data.size > 0) state.recordChunks.push(e.data) };
-  state.mediaRecorder.onstop = () => {
-    state.videoBlob = new Blob(state.recordChunks, { type:'video/webm' });
-    revokeURL(state.videoURL);
-    state.videoURL = URL.createObjectURL(state.videoBlob);
-    const pb = $('videoPlayback');
-    pb.src = state.videoURL;
-    pb.style.display = 'block';
-    $('videoLive').style.display = 'none';
-    $('startRec').classList.add('hidden');
-    $('stopRec').classList.add('hidden');
-    $('retakeVideo').classList.remove('hidden');
-    $('startCam').classList.remove('hidden');
-    $('startCam').textContent = '▶ New recording';
+$('btnRec').addEventListener('click', () => {
+  S.chunks = [];
+  S.recorder = new MediaRecorder(S.stream);
+  S.recorder.ondataavailable = e => { if(e.data.size>0) S.chunks.push(e.data) };
+  S.recorder.onstop = () => {
+    S.videoBlob = new Blob(S.chunks, {type:'video/webm'});
+    revoke(S.videoURL); S.videoURL = URL.createObjectURL(S.videoBlob);
+    const pb = $('vidPlayback');
+    pb.src = S.videoURL; pb.style.display = 'block';
+    $('vidLive').style.display = 'none';
+    $('btnRec').classList.add('hidden');
+    $('btnStopRec').classList.add('hidden');
+    $('btnRetakeVid').classList.remove('hidden');
+    $('btnStartCam').classList.remove('hidden');
+    $('btnStartCam').textContent = '▶ New recording';
+    stopStream();
   };
-  state.mediaRecorder.start();
-  state.isRecording = true;
-  $('startRec').classList.add('hidden');
-  $('stopRec').classList.remove('hidden');
+  S.recorder.start(); S.recording = true;
+  $('btnRec').classList.add('hidden');
+  $('btnStopRec').classList.remove('hidden');
 });
 
-$('stopRec').addEventListener('click', () => {
-  if(state.mediaRecorder && state.isRecording){
-    state.mediaRecorder.stop();
-    state.isRecording = false;
-  }
-  stopStream();
+$('btnStopRec').addEventListener('click', () => {
+  if(S.recorder && S.recording){ S.recorder.stop(); S.recording = false; }
 });
 
-$('retakeVideo').addEventListener('click', () => {
-  revokeURL(state.videoURL);
-  state.videoURL = null;
-  state.videoBlob = null;
-  $('videoPlayback').style.display = 'none';
-  $('videoPlayback').src = '';
-  $('videoLive').style.display = 'none';
-  $('videoPlaceholder').style.display = 'flex';
-  $('startCam').classList.remove('hidden');
-  $('startCam').textContent = '▶ Start Camera';
-  $('retakeVideo').classList.add('hidden');
-  $('startRec').classList.add('hidden');
-  $('stopRec').classList.add('hidden');
+$('btnRetakeVid').addEventListener('click', () => {
+  revoke(S.videoURL); S.videoURL = null; S.videoBlob = null;
+  $('vidPlayback').style.display = 'none'; $('vidPlayback').src = '';
+  $('vidLive').style.display = 'none';
+  $('vidPlaceholder').style.display = 'flex';
+  $('btnStartCam').classList.remove('hidden'); $('btnStartCam').textContent = '▶ Open Camera';
+  $('btnRec').classList.add('hidden'); $('btnStopRec').classList.add('hidden');
+  $('btnRetakeVid').classList.add('hidden');
+  $('vidChosen').style.display = 'none';
 });
 
-$('videoFileInput').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if(!file) return;
-  revokeURL(state.videoURL);
-  state.videoBlob = file;
-  state.videoURL = URL.createObjectURL(file);
-  const pb = $('videoPlayback');
-  pb.src = state.videoURL;
-  pb.style.display = 'block';
-  $('videoLive').style.display = 'none';
-  $('videoPlaceholder').style.display = 'none';
-  $('videoChosen').textContent = '✅ ' + file.name;
-  $('videoChosen').style.display = 'block';
-  $('retakeVideo').classList.remove('hidden');
+$('vidFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return;
+  revoke(S.videoURL); S.videoBlob = f; S.videoURL = URL.createObjectURL(f);
+  const pb = $('vidPlayback');
+  pb.src = S.videoURL; pb.style.display = 'block';
+  $('vidLive').style.display = 'none'; $('vidPlaceholder').style.display = 'none';
+  $('vidChosen').textContent = '✅ ' + f.name; $('vidChosen').style.display = 'block';
+  $('btnRetakeVid').classList.remove('hidden');
 });
 
-/* ──────────────────────────────────────────────────────────
-   STEP 2: AUDIO CAPTURE
-────────────────────────────────────────────────────────── */
-let audioTimerInterval = null;
-let audioElapsed = 0;
-
-$('startAudioRec').addEventListener('click', async () => {
+/* ── STEP 2: Audio ───────────────────────────────────────────── */
+$('btnAudioRec').addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
-    state.mediaStream = stream;
-    state.recordChunks = [];
-    state.mediaRecorder = new MediaRecorder(stream);
-    state.mediaRecorder.ondataavailable = e => { if(e.data.size>0) state.recordChunks.push(e.data) };
-    state.mediaRecorder.onstop = () => {
-      state.audioBlob = new Blob(state.recordChunks, { type:'audio/webm' });
-      revokeURL(state.audioURL);
-      state.audioURL = URL.createObjectURL(state.audioBlob);
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    S.stream = stream; S.chunks = [];
+    S.recorder = new MediaRecorder(stream);
+    S.recorder.ondataavailable = e => { if(e.data.size>0) S.chunks.push(e.data) };
+    S.recorder.onstop = () => {
+      S.audioBlob = new Blob(S.chunks, {type:'audio/webm'});
+      revoke(S.audioURL); S.audioURL = URL.createObjectURL(S.audioBlob);
       const ap = $('audioPlayback');
-      ap.src = state.audioURL;
-      ap.style.display = 'block';
-      $('audioViz').classList.remove('recording');
+      ap.src = S.audioURL; ap.style.display = 'block';
+      $('audioBars').classList.remove('live');
+      $('recIndicator').classList.remove('recording');
+      $('recStatus').textContent = 'Recording complete';
       stopStream();
-      $('stopAudioRec').classList.add('hidden');
-      $('retakeAudio').classList.remove('hidden');
-      $('startAudioRec').classList.remove('hidden');
-      $('startAudioRec').textContent = '🎙 New recording';
-      clearInterval(audioTimerInterval);
-      $('recDot').parentElement.classList.remove('recording');
+      clearInterval(S.audioInterval);
+      $('btnAudioStop').classList.add('hidden');
+      $('btnAudioRetake').classList.remove('hidden');
+      $('btnAudioRec').classList.remove('hidden');
+      $('btnAudioRec').textContent = '🎙 New Recording';
     };
-    state.mediaRecorder.start();
-    state.isRecording = true;
-
-    // Timer
-    audioElapsed = 0;
-    $('audioTimer').textContent = '00:00';
-    $('audioTimerWrap').classList.add('recording');
-    $('recDot').style.opacity = '1';
-    audioTimerInterval = setInterval(() => {
-      audioElapsed++;
-      $('audioTimer').textContent = formatTime(audioElapsed);
-    }, 1000);
-
-    $('audioViz').classList.add('recording');
-    $('startAudioRec').classList.add('hidden');
-    $('stopAudioRec').classList.remove('hidden');
+    S.recorder.start(); S.recording = true;
+    S.audioSec = 0; $('audioTimer').textContent = '00:00';
+    S.audioInterval = setInterval(() => { S.audioSec++; $('audioTimer').textContent = fmtTime(S.audioSec) }, 1000);
+    $('audioBars').classList.add('live');
+    $('recIndicator').classList.add('recording');
+    $('recStatus').textContent = 'Recording…';
+    $('btnAudioRec').classList.add('hidden');
+    $('btnAudioStop').classList.remove('hidden');
     $('audioPlayback').style.display = 'none';
-  } catch(err){
-    alert('Microphone access denied.');
-  }
+  } catch(e){ alert('Microphone access denied.') }
 });
 
-$('stopAudioRec').addEventListener('click', () => {
-  if(state.mediaRecorder && state.isRecording){
-    state.mediaRecorder.stop();
-    state.isRecording = false;
-  }
-  clearInterval(audioTimerInterval);
-  $('recDot').style.opacity = '0';
+$('btnAudioStop').addEventListener('click', () => {
+  if(S.recorder && S.recording){ S.recorder.stop(); S.recording = false; }
+  clearInterval(S.audioInterval);
 });
 
-$('retakeAudio').addEventListener('click', () => {
-  revokeURL(state.audioURL);
-  state.audioURL = null;
-  state.audioBlob = null;
-  $('audioPlayback').style.display = 'none';
-  $('audioPlayback').src = '';
-  $('retakeAudio').classList.add('hidden');
-  $('startAudioRec').classList.remove('hidden');
-  $('startAudioRec').textContent = '🎙 Start Recording';
-  $('audioTimer').textContent = '00:00';
+$('btnAudioRetake').addEventListener('click', () => {
+  revoke(S.audioURL); S.audioURL = null; S.audioBlob = null;
+  $('audioPlayback').style.display = 'none'; $('audioPlayback').src = '';
+  $('btnAudioRetake').classList.add('hidden');
+  $('btnAudioRec').classList.remove('hidden'); $('btnAudioRec').textContent = '🎙 Start Recording';
+  $('audioBars').classList.remove('live'); $('audioTimer').textContent = '00:00';
+  $('recStatus').textContent = 'Ready to record'; $('recIndicator').classList.remove('recording');
+  $('audioChosen').style.display = 'none';
 });
 
-$('audioFileInput').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if(!file) return;
-  revokeURL(state.audioURL);
-  state.audioBlob = file;
-  state.audioURL = URL.createObjectURL(file);
+$('audioFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return;
+  revoke(S.audioURL); S.audioBlob = f; S.audioURL = URL.createObjectURL(f);
   const ap = $('audioPlayback');
-  ap.src = state.audioURL;
-  ap.style.display = 'block';
-  $('audioChosen').textContent = '✅ ' + file.name;
-  $('audioChosen').style.display = 'block';
-  $('retakeAudio').classList.remove('hidden');
+  ap.src = S.audioURL; ap.style.display = 'block';
+  $('audioChosen').textContent = '✅ ' + f.name; $('audioChosen').style.display = 'block';
+  $('btnAudioRetake').classList.remove('hidden');
 });
 
-/* ──────────────────────────────────────────────────────────
-   STEP 2: TEXT CAPTURE
-────────────────────────────────────────────────────────── */
-$('textMessage').addEventListener('input', e => {
-  state.textContent = e.target.value;
+/* ── STEP 2: Text ────────────────────────────────────────────── */
+$('textMsg').addEventListener('input', e => {
+  S.text = e.target.value;
   $('charCount').textContent = e.target.value.length;
 });
 
-/* ──────────────────────────────────────────────────────────
-   STEP 2 → 3 NAVIGATION
-────────────────────────────────────────────────────────── */
+/* ── Nav: Step 2 → 3 ─────────────────────────────────────────── */
 $('toStep1').addEventListener('click', () => showStep(1));
 $('toStep2b').addEventListener('click', () => showStep(2));
 $('toStep3b').addEventListener('click', () => showStep(4));
 
 $('toStep3').addEventListener('click', () => {
-  // Validate content exists
-  if(state.format === 'video' && !state.videoURL && !state.videoBlob){
-    return showCaptureError('Please record or upload a video first.');
-  }
-  if(state.format === 'audio' && !state.audioURL && !state.audioBlob){
-    return showCaptureError('Please record or upload audio first.');
-  }
-  if(state.format === 'text' && !state.textContent.trim()){
-    return showCaptureError('Please write a message first.');
-  }
+  const btn = $('toStep3');
+  const err = (msg) => {
+    const orig = btn.textContent;
+    btn.style.background = '#fee2e2'; btn.style.color = 'var(--ruby)';
+    btn.textContent = '⚠ ' + msg;
+    setTimeout(() => { btn.style.background = ''; btn.style.color = ''; btn.textContent = orig }, 2200);
+  };
+  if(S.format === 'video' && !S.videoURL)   return err('Record or upload a video first.');
+  if(S.format === 'audio' && !S.audioURL)   return err('Record or upload audio first.');
+  if(S.format === 'text'  && !S.text.trim()) return err('Write a message first.');
   buildPreview();
   showStep(3);
 });
 
-function showCaptureError(msg){
-  // Brief shake on the button
-  const btn = $('toStep3');
-  btn.style.background = '#fee2e2';
-  btn.style.color = '#dc2626';
-  btn.textContent = msg;
-  setTimeout(() => {
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.textContent = 'Preview →';
-  }, 2000);
-}
-
-/* ──────────────────────────────────────────────────────────
-   BUILD PREVIEW
-────────────────────────────────────────────────────────── */
+/* ── Build preview ───────────────────────────────────────────── */
 function buildPreview(){
-  const box = $('previewBox');
-  const badge = $('previewBadge');
-  box.innerHTML = '';
-
-  if(state.format === 'video'){
-    badge.textContent = '🎥 Video message';
+  const wrap = $('previewWrap');
+  const label = $('previewLabel');
+  wrap.innerHTML = '';
+  if(S.format === 'video'){
+    label.textContent = '🎥 Video message';
     const v = document.createElement('video');
-    v.src = state.videoURL;
-    v.controls = true;
-    v.style.width = '100%';
-    v.style.borderRadius = '20px';
-    box.appendChild(v);
-  } else if(state.format === 'audio'){
-    badge.textContent = '🎙 Audio message';
+    v.src = S.videoURL; v.controls = true;
+    wrap.appendChild(v);
+  } else if(S.format === 'audio'){
+    label.textContent = '🎙 Audio message';
     const a = document.createElement('audio');
-    a.src = state.audioURL;
-    a.controls = true;
-    a.style.width = '100%';
-    box.style.padding = '16px';
-    box.appendChild(a);
+    a.src = S.audioURL; a.controls = true;
+    wrap.style.padding = '20px';
+    wrap.appendChild(a);
   } else {
-    badge.textContent = '✍️ Text message';
+    label.textContent = '✍️ Text message';
     const d = document.createElement('div');
-    d.className = 'preview-text-box';
-    d.textContent = state.textContent;
-    box.appendChild(d);
+    d.className = 'preview-text'; d.textContent = S.text;
+    wrap.appendChild(d);
   }
 }
 
-/* ──────────────────────────────────────────────────────────
-   STEP 3 → 4
-────────────────────────────────────────────────────────── */
+/* ── Step 3 → 4 ──────────────────────────────────────────────── */
 $('toStep4').addEventListener('click', () => showStep(4));
 
-/* ──────────────────────────────────────────────────────────
-   STEP 4: ACTION CARDS
-────────────────────────────────────────────────────────── */
-const actionExtras = {
-  private:  null,
-  send:     'extraSend',
-  schedule: 'extraSchedule',
-  jic:      'extraJic'
-};
-
-document.querySelectorAll('.action-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.action-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    const action = card.dataset.action;
-    state.action = action;
-
-    // Close all extras
-    ['extraSend','extraSchedule','extraJic'].forEach(id => {
-      $(id).classList.remove('open');
-    });
-
-    // Open relevant extra
-    const extraId = actionExtras[action];
-    if(extraId){
-      setTimeout(() => $(extraId).classList.add('open'), 10);
-    }
-
-    $('actionError').style.display = 'none';
+/* ── Action tiles ────────────────────────────────────────────── */
+const extraMap = {private:null, send:'xSend', schedule:'xSchedule', jic:'xJic'};
+document.querySelectorAll('.action-tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    document.querySelectorAll('.action-tile').forEach(t => t.classList.remove('selected'));
+    tile.classList.add('selected');
+    S.action = tile.dataset.action;
+    ['xSend','xSchedule','xJic'].forEach(id => $(id).classList.remove('open'));
+    const ex = extraMap[S.action];
+    if(ex) setTimeout(() => $(ex).classList.add('open'), 10);
+    $('actionErr').style.display = 'none';
   });
 });
 
-/* ──────────────────────────────────────────────────────────
-   SUBMIT
-────────────────────────────────────────────────────────── */
-$('submitAction').addEventListener('click', () => {
-  const errEl = $('actionError');
-  errEl.style.display = 'none';
+/* ── Submit ──────────────────────────────────────────────────── */
+$('btnSubmit').addEventListener('click', () => {
+  const err = $('actionErr');
+  err.style.display = 'none';
+  const showErr = msg => { err.textContent = '⚠ ' + msg; err.style.display = 'block'; };
 
-  // Validation
-  if(state.action === 'send'){
-    const email = $('sendEmail').value.trim();
-    if(!email || !email.includes('@')){
-      errEl.textContent = '⚠️ Please enter a valid recipient email.';
-      errEl.style.display = 'block';
-      return;
-    }
+  if(S.action === 'send'){
+    const e = $('sendEmail').value.trim();
+    if(!e || !e.includes('@')) return showErr('Please enter a valid recipient email address.');
   }
-  if(state.action === 'schedule'){
-    const email = $('schedEmail').value.trim();
-    const date  = $('schedDate').value;
-    if(!email || !email.includes('@')){
-      errEl.textContent = '⚠️ Please enter a valid recipient email.';
-      errEl.style.display = 'block';
-      return;
-    }
-    if(!date){
-      errEl.textContent = '⚠️ Please choose a delivery date.';
-      errEl.style.display = 'block';
-      return;
-    }
-    if(new Date(date) <= new Date()){
-      errEl.textContent = '⚠️ Please choose a future date and time.';
-      errEl.style.display = 'block';
-      return;
-    }
+  if(S.action === 'schedule'){
+    const e = $('schedEmail').value.trim();
+    const d = $('schedDate').value;
+    if(!e || !e.includes('@')) return showErr('Please enter a valid recipient email address.');
+    if(!d) return showErr('Please choose a delivery date and time.');
+    if(new Date(d) <= new Date()) return showErr('Please choose a date in the future.');
   }
-  if(state.action === 'jic'){
-    const e1 = $('jicEmail1').value.trim();
-    if(!e1 || !e1.includes('@')){
-      errEl.textContent = '⚠️ Please enter at least one trusted contact email.';
-      errEl.style.display = 'block';
-      return;
-    }
+  if(S.action === 'jic'){
+    const e = $('jicE1').value.trim();
+    if(!e || !e.includes('@')) return showErr('Please enter at least one trusted contact email.');
   }
 
-  // Success state
-  showSuccessState();
+  showSuccess();
 });
 
-function showSuccessState(){
-  const titleMap = {
+function showSuccess(){
+  const tm = {
     private:  'Your message has been saved.',
     send:     'Your message is on its way!',
     schedule: 'Scheduled. It will be delivered.',
-    jic:      'Saved. Your trusted contacts are set.'
+    jic:      'Saved. Trusted contacts are set.'
   };
-  const pillMap = {
-    private:  '🔒 Saved privately',
-    send:     '📩 Sent to ' + ($('sendEmail').value || 'recipient'),
-    schedule: '⏳ Scheduled for ' + formatScheduledDate(),
-    jic:      '🛟 Just-in-case delivery enabled'
-  };
-  const subMap = {
-    private:  'Only you have access to this message.',
+  const sm = {
+    private:  'Saved privately in your vault. Only you can access it.',
     send:     'The recipient will receive it in their inbox shortly.',
-    schedule: 'It will be delivered exactly on time.',
+    schedule: 'It will be delivered automatically at the chosen time.',
     jic:      'Your trusted contacts will receive it only if needed.'
   };
-
-  $('successTitle').textContent = titleMap[state.action];
-  $('successPill').textContent  = pillMap[state.action];
-  $('successSub').textContent   = subMap[state.action];
-
+  const cm = {
+    private:  '🔒 Saved privately',
+    send:     '📩 Sent → ' + ($('sendEmail').value || 'recipient'),
+    schedule: '⏳ Scheduled → ' + fmtSchedDate(),
+    jic:      '🛟 Just-in-case delivery enabled'
+  };
+  $('successTitle').textContent = tm[S.action];
+  $('successSub').textContent   = sm[S.action];
+  $('successChip').textContent  = cm[S.action];
   stopAllMedia();
   showStep(5);
 }
 
-function formatScheduledDate(){
-  const val = $('schedDate').value;
-  if(!val) return 'the scheduled time';
-  try {
-    return new Date(val).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  } catch(e){ return 'the scheduled time' }
+function fmtSchedDate(){
+  try { return new Date($('schedDate').value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) }
+  catch(e){ return 'scheduled time' }
 }
 
-/* ──────────────────────────────────────────────────────────
-   DONE — reset
-────────────────────────────────────────────────────────── */
-$('btnDone').addEventListener('click', () => {
-  resetState();
-  showStep(1);
-});
+/* ── Done / reset ────────────────────────────────────────────── */
+$('btnDone').addEventListener('click', () => { resetState(); showStep(1); });
 
 function resetState(){
-  revokeURL(state.videoURL);
-  revokeURL(state.audioURL);
-  Object.assign(state, {
+  revoke(S.videoURL); revoke(S.audioURL);
+  Object.assign(S, {
     step:1, format:'video', action:'private',
-    videoBlob:null, videoURL:null,
-    audioBlob:null, audioURL:null,
-    textContent:'',
-    mediaStream:null, mediaRecorder:null, recordChunks:[],
-    isRecording:false
+    videoBlob:null, videoURL:null, audioBlob:null, audioURL:null, text:'',
+    stream:null, recorder:null, chunks:[], recording:false, audioSec:0
   });
-  // Reset format buttons
-  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('selected'));
-  $('fmtVideo').classList.add('selected');
-  // Reset video UI
-  $('videoPlaceholder').style.display = 'flex';
-  $('videoLive').style.display = 'none';
-  $('videoPlayback').style.display = 'none';
-  $('videoPlayback').src = '';
-  $('startCam').classList.remove('hidden');
-  $('startCam').textContent = '▶ Start Camera';
-  $('startRec').classList.add('hidden');
-  $('stopRec').classList.add('hidden');
-  $('retakeVideo').classList.add('hidden');
-  $('videoChosen').style.display = 'none';
-  $('videoFileInput').value = '';
-  // Reset audio UI
-  $('audioPlayback').style.display = 'none';
-  $('audioPlayback').src = '';
-  $('startAudioRec').classList.remove('hidden');
-  $('startAudioRec').textContent = '🎙 Start Recording';
-  $('stopAudioRec').classList.add('hidden');
-  $('retakeAudio').classList.add('hidden');
-  $('audioChosen').style.display = 'none';
-  $('audioFileInput').value = '';
-  $('audioTimer').textContent = '00:00';
-  $('audioViz').classList.remove('recording');
-  // Reset text
-  $('textMessage').value = '';
-  $('charCount').textContent = '0';
-  // Reset action cards
-  document.querySelectorAll('.action-card').forEach(c => c.classList.remove('selected'));
-  $('actPrivate').classList.add('selected');
-  ['extraSend','extraSchedule','extraJic'].forEach(id => $(id).classList.remove('open'));
-  $('actionError').style.display = 'none';
-  $('sendEmail').value = '';
-  $('schedEmail').value = '';
-  $('schedDate').value = '';
-  $('jicEmail1').value = '';
-  $('jicEmail2').value = '';
-  $('jicNote').value = '';
-  // Modal scroll to top
-  $('modal').scrollTop = 0;
+  clearInterval(S.audioInterval);
+  // Format cards
+  document.querySelectorAll('.fmt-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector('[data-fmt="video"]').classList.add('selected');
+  // Video
+  $('vidPlaceholder').style.display = 'flex';
+  $('vidLive').style.display = 'none'; $('vidPlayback').style.display = 'none'; $('vidPlayback').src = '';
+  $('btnStartCam').classList.remove('hidden'); $('btnStartCam').textContent = '▶ Open Camera';
+  $('btnRec').classList.add('hidden'); $('btnStopRec').classList.add('hidden'); $('btnRetakeVid').classList.add('hidden');
+  $('vidChosen').style.display = 'none'; $('vidFile').value = '';
+  // Audio
+  $('audioPlayback').style.display = 'none'; $('audioPlayback').src = '';
+  $('btnAudioRec').classList.remove('hidden'); $('btnAudioRec').textContent = '🎙 Start Recording';
+  $('btnAudioStop').classList.add('hidden'); $('btnAudioRetake').classList.add('hidden');
+  $('audioBars').classList.remove('live'); $('audioTimer').textContent = '00:00';
+  $('recStatus').textContent = 'Ready to record'; $('recIndicator').classList.remove('recording');
+  $('audioChosen').style.display = 'none'; $('audioFile').value = '';
+  // Text
+  $('textMsg').value = ''; $('charCount').textContent = '0';
+  // Actions
+  document.querySelectorAll('.action-tile').forEach(t => t.classList.remove('selected'));
+  document.querySelector('[data-action="private"]').classList.add('selected');
+  ['xSend','xSchedule','xJic'].forEach(id => $(id).classList.remove('open'));
+  $('actionErr').style.display = 'none';
+  $('sendEmail').value = ''; $('schedEmail').value = ''; $('schedDate').value = '';
+  $('jicE1').value = ''; $('jicE2').value = ''; $('jicNote').value = '';
+  $('capMain').scrollTop = 0;
 }
 
-/* ──────────────────────────────────────────────────────────
-   MEDIA CLEANUP
-────────────────────────────────────────────────────────── */
-function stopStream(){
-  if(state.mediaStream){
-    state.mediaStream.getTracks().forEach(t => t.stop());
-    state.mediaStream = null;
-  }
-}
+/* ── Media cleanup ───────────────────────────────────────────── */
+function stopStream(){ if(S.stream){ S.stream.getTracks().forEach(t=>t.stop()); S.stream=null; } }
 function stopAllMedia(){
   stopStream();
-  if(state.isRecording && state.mediaRecorder){
-    try { state.mediaRecorder.stop() } catch(e){}
-    state.isRecording = false;
-  }
-  clearInterval(audioTimerInterval);
+  if(S.recording && S.recorder){ try{ S.recorder.stop() }catch(e){} S.recording=false; }
+  clearInterval(S.audioInterval);
 }
 
-/* ──────────────────────────────────────────────────────────
-   SCROLL REVEAL
-────────────────────────────────────────────────────────── */
-const revealEls = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add('in-view');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.15 });
-revealEls.forEach(el => revealObserver.observe(el));
-
-/* ──────────────────────────────────────────────────────────
-   INITIAL STATE — show step 1 placeholder
-────────────────────────────────────────────────────────── */
-// Pre-show step 1 on modal open (handled in openModal)
-// Kick off with nothing visible in steps (they start hidden via CSS)
+/* ── Scroll reveal ───────────────────────────────────────────── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
+}, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 
 </body>
