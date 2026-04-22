@@ -697,76 +697,39 @@ footer{padding:40px;border-top:1px solid var(--divider)}
 
 
 <!-- ════════════════════════════════════════════════════
-  EMAILJS  — loads before the module script
-  ─────────────────────────────────────────────────────
-  REQUIRED SETUP (free, 5 min):
-  1. Go to https://emailjs.com  →  create a free account
-  2. Email Services  →  Add Service  →  connect Gmail/Outlook
-  3. Email Templates  →  Create Template  →  paste this body:
-
-       Subject: {{from_name}} sent you a {{message_type}} message
-
-       Hi there,
-
-       {{from_name}} sent you a {{message_type}} message via Capsule.
-
-       {{#file_url}}
-       📎 View/download your message:
-       {{file_url}}
-       {{/file_url}}
-
-       {{#text_content}}
-       ✍️ Message:
-       {{text_content}}
-       {{/text_content}}
-
-       {{action_note}}
-
-  4. In Account → API Keys  →  copy your Public Key
-  5. Replace the three placeholders below:
+  DEPENDENCIES
 ════════════════════════════════════════════════════ -->
+<!-- EmailJS: browser-side email sending (free 200/mo at emailjs.com) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Supabase JS v2 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- ════════════════════════════════════════════════════
-  FIREBASE + APP LOGIC
+  APP LOGIC
+  ─────────────────────────────────────────────────────
+  TWO THINGS TO FILL IN:
+  1. SUPABASE_URL below  (Settings → API → Project URL)
+  2. EJS values below    (only needed for email sending)
 ════════════════════════════════════════════════════ -->
-<script type="module">
-
+<script>
 /* ─────────────────────────────────────────────────────
-   FIREBASE IMPORTS  ← must be at the very top
+   ① SUPABASE — paste your Project URL on the next line
+   supabase.com → your project → Settings → API → Project URL
 ───────────────────────────────────────────────────── */
-import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-import { getFirestore, collection, addDoc, Timestamp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const SUPABASE_URL = 'https://ftmtbklxjpgxtbsoafvs.supabase.co/rest/v1/'; // ← REPLACE THIS
+const SUPABASE_KEY = 'sb_publishable_yxYC_3ZYThl7FgTz2oiKwA_qRuq5rbF';
+const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ─────────────────────────────────────────────────────
-   ① FIREBASE CONFIG  (your project — do not change)
-───────────────────────────────────────────────────── */
-const firebaseConfig = {
-  apiKey:            "AIzaSyDYNcJ6uWItO6W7m9TVfQibYtynCQaeAlA",
-  authDomain:        "capsule-24.firebaseapp.com",
-  projectId:         "capsule-24",
-  storageBucket:     "capsule-24.firebasestorage.app",  // ← correct URL
-  messagingSenderId: "954712376887",
-  appId:             "1:954712376887:web:1c3d1a4b6d1efeb29821b2",
-  measurementId:     "G-YRD2JQDZV6"
-};
-
-const fbApp   = initializeApp(firebaseConfig);
-const storage = getStorage(fbApp);
-const db      = getFirestore(fbApp);
-
-/* ─────────────────────────────────────────────────────
-   ② EMAILJS CONFIG  ← replace these three values
-   (see setup instructions in the comment above)
+   ② EMAILJS — only needed for "Send now" feature
+   Setup: emailjs.com → free account → Email Service →
+   Email Template (use vars: {{to_email}}, {{from_name}},
+   {{message_type}}, {{file_url}}, {{text_content}}, {{action_note}})
 ───────────────────────────────────────────────────── */
 const EJS = {
-  serviceId:  'YOUR_SERVICE_ID',   // e.g. 'service_abc1234'
-  templateId: 'YOUR_TEMPLATE_ID',  // e.g. 'template_xyz5678'
-  publicKey:  'YOUR_PUBLIC_KEY'    // e.g. 'aBcDeFgHiJkLmNoP'
+  serviceId:  'YOUR_SERVICE_ID',
+  templateId: 'YOUR_TEMPLATE_ID',
+  publicKey:  'YOUR_PUBLIC_KEY'
 };
 
 /* ─────────────────────────────────────────────────────
@@ -790,11 +753,102 @@ const S = {
 };
 
 /* ─────────────────────────────────────────────────────
+   SUPABASE: UPLOAD FILE
+   Uploads blob to the "capsules" storage bucket.
+   Creates bucket at: supabase.com → Storage → New bucket
+   Name it "capsules" and set it to Public.
+───────────────────────────────────────────────────── */
+async function uploadToSupabase(blob) {
+  const ext      = blob.type.includes('audio') ? 'webm' : blob.type.includes('video') ? 'webm' : 'webm';
+  const fileName = `${Date.now()}_${(blob.name || 'recording.' + ext).replace(/\s+/g, '_')}`;
+
+  $('uploadProgress').style.display = 'block';
+  $('uploadLabel').textContent = 'Uploading to secure storage…';
+  $('uploadFill').style.width  = '0%';
+  $('uploadPct').textContent   = '0%';
+
+  // Simulate progress while upload runs (Supabase doesn't expose XHR progress in JS SDK)
+  let fakeProgress = 0;
+  const fakeTimer = setInterval(() => {
+    fakeProgress = Math.min(fakeProgress + Math.random() * 18, 90);
+    $('uploadFill').style.width = fakeProgress + '%';
+    $('uploadPct').textContent  = Math.floor(fakeProgress) + '%';
+  }, 350);
+
+  const { data, error } = await supa.storage
+    .from('capsules')
+    .upload(fileName, blob, { upsert: false });
+
+  clearInterval(fakeTimer);
+
+  if (error) {
+    $('uploadProgress').style.display = 'none';
+    $('uploadFill').style.width = '0%';
+    throw new Error('Upload failed: ' + error.message);
+  }
+
+  // Jump to 100%
+  $('uploadFill').style.width  = '100%';
+  $('uploadPct').textContent   = '100%';
+  $('uploadLabel').textContent = 'Finalising…';
+  await new Promise(r => setTimeout(r, 400));
+  $('uploadProgress').style.display = 'none';
+  $('uploadFill').style.width = '0%';
+
+  const { data: urlData } = supa.storage.from('capsules').getPublicUrl(fileName);
+  return urlData.publicUrl;
+}
+
+/* ─────────────────────────────────────────────────────
+   SUPABASE: SAVE RECORD TO DATABASE
+   Table name: "capsules"
+   Create at: supabase.com → Table Editor → New table
+   Columns: type, file_url, text_content, action,
+            recipient_email, scheduled_for, jic_contact1,
+            jic_contact2, jic_note, created_at
+───────────────────────────────────────────────────── */
+async function saveRecord({ type, fileURL, textContent, action,
+                            recipientEmail, scheduledFor,
+                            jicContact1, jicContact2, jicNote }) {
+  const { error } = await supa.from('capsules').insert([{
+    type,
+    file_url:        fileURL        || null,
+    text_content:    textContent    || null,
+    action,
+    recipient_email: recipientEmail || null,
+    scheduled_for:   scheduledFor   || null,
+    jic_contact1:    jicContact1    || null,
+    jic_contact2:    jicContact2    || null,
+    jic_note:        jicNote        || null,
+    created_at:      new Date().toISOString()
+  }]);
+  if (error) throw new Error('Database save failed: ' + error.message);
+}
+
+/* ─────────────────────────────────────────────────────
+   EMAILJS: SEND EMAIL
+   Skips gracefully if not yet configured.
+───────────────────────────────────────────────────── */
+async function sendEmail({ toEmail, messageType, fileURL, textContent, actionNote }) {
+  if (!window.emailjs) { console.warn('EmailJS not loaded.'); return; }
+  if (EJS.serviceId === 'YOUR_SERVICE_ID') { console.warn('EmailJS not configured — skipping.'); return; }
+  window.emailjs.init({ publicKey: EJS.publicKey });
+  return window.emailjs.send(EJS.serviceId, EJS.templateId, {
+    to_email:     toEmail,
+    from_name:    'Capsule',
+    message_type: messageType.charAt(0).toUpperCase() + messageType.slice(1),
+    file_url:     fileURL      || '',
+    text_content: textContent  || '',
+    action_note:  actionNote   || ''
+  });
+}
+
+/* ─────────────────────────────────────────────────────
    OVERLAY OPEN / CLOSE
 ───────────────────────────────────────────────────── */
 const overlay = $('overlay');
-const openOverlay = () => { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; showStep(1); };
-const closeOverlay = () => { overlay.classList.remove('open'); document.body.style.overflow = ''; stopAllMedia(); };
+const openOverlay  = () => { overlay.classList.add('open');    document.body.style.overflow = 'hidden'; showStep(1); };
+const closeOverlay = () => { overlay.classList.remove('open'); document.body.style.overflow = '';       stopAllMedia(); };
 
 ['heroCta', 'navCta', 'ctaBottom'].forEach(id => $(id).addEventListener('click', openOverlay));
 $('capClose').addEventListener('click', closeOverlay);
@@ -804,17 +858,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay
 /* ─────────────────────────────────────────────────────
    STEP NAVIGATION
 ───────────────────────────────────────────────────── */
-const TITLES = ['Choose your format', 'Capture your message', 'Preview', 'What do you want to do?', 'Done!'];
+const TITLES = ['Choose your format','Capture your message','Preview','What do you want to do?','Done!'];
 
 function updateSidebar(n) {
-  [1, 2, 3, 4].forEach(i => {
+  [1,2,3,4].forEach(i => {
     const el = $('ss' + i), conn = $('sc' + i);
-    el.classList.remove('active', 'done');
+    el.classList.remove('active','done');
     if (conn) conn.classList.remove('done');
-    if (i < n) { el.classList.add('done'); if (conn) conn.classList.add('done'); }
+    if (i < n)      { el.classList.add('done'); if (conn) conn.classList.add('done'); }
     else if (i === n) el.classList.add('active');
   });
-  $('capStepLabel').textContent = TITLES[Math.min(n, 5) - 1];
+  $('capStepLabel').textContent = TITLES[Math.min(n,5)-1];
 }
 
 function showStep(n) {
@@ -824,7 +878,7 @@ function showStep(n) {
   ['nav1','nav2','nav3','nav4'].forEach(v => $(v).classList.add('hidden'));
   if (n <= 4) {
     $('view' + n).classList.remove('hidden');
-    $('nav' + n).classList.remove('hidden');
+    $('nav'  + n).classList.remove('hidden');
   } else {
     $('viewSuccess').classList.remove('hidden');
   }
@@ -843,10 +897,10 @@ document.querySelectorAll('.fmt-card').forEach(card => {
 });
 
 $('toStep2').addEventListener('click', () => {
-  ['panelVideo', 'panelAudio', 'panelText'].forEach(p => {
+  ['panelVideo','panelAudio','panelText'].forEach(p => {
     const el = $(p); el.classList.remove('show'); el.style.display = 'none';
   });
-  const map = { video: 'panelVideo', audio: 'panelAudio', text: 'panelText' };
+  const map = { video:'panelVideo', audio:'panelAudio', text:'panelText' };
   const panel = $(map[S.format]);
   panel.style.display = 'block'; panel.classList.add('show');
   showStep(2);
@@ -857,12 +911,12 @@ $('toStep2').addEventListener('click', () => {
 ───────────────────────────────────────────────────── */
 $('btnStartCam').addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
     S.stream = stream;
     const v = $('vidLive');
     v.srcObject = stream; v.style.display = 'block';
     $('vidPlaceholder').style.display = 'none';
-    $('vidPlayback').style.display = 'none';
+    $('vidPlayback').style.display    = 'none';
     $('btnStartCam').classList.add('hidden');
     $('btnRec').classList.remove('hidden');
   } catch (e) { alert('Camera/mic access denied. Please allow permissions and try again.'); }
@@ -873,12 +927,12 @@ $('btnRec').addEventListener('click', () => {
   S.recorder = new MediaRecorder(S.stream);
   S.recorder.ondataavailable = e => { if (e.data.size > 0) S.chunks.push(e.data); };
   S.recorder.onstop = () => {
-    S.videoBlob = new Blob(S.chunks, { type: 'video/webm' });
+    S.videoBlob = new Blob(S.chunks, { type:'video/webm' });
     revoke(S.videoURL); S.videoURL = URL.createObjectURL(S.videoBlob);
     const pb = $('vidPlayback');
     pb.src = S.videoURL; pb.style.display = 'block';
     $('vidLive').style.display = 'none';
-    $('btnRec').classList.add('hidden'); $('btnStopRec').classList.add('hidden');
+    $('btnRec').classList.add('hidden');     $('btnStopRec').classList.add('hidden');
     $('btnRetakeVid').classList.remove('hidden');
     $('btnStartCam').classList.remove('hidden'); $('btnStartCam').textContent = '▶ New recording';
     stopStream();
@@ -894,7 +948,7 @@ $('btnStopRec').addEventListener('click', () => {
 $('btnRetakeVid').addEventListener('click', () => {
   revoke(S.videoURL); S.videoURL = null; S.videoBlob = null;
   $('vidPlayback').style.display = 'none'; $('vidPlayback').src = '';
-  $('vidLive').style.display = 'none'; $('vidPlaceholder').style.display = 'flex';
+  $('vidLive').style.display     = 'none'; $('vidPlaceholder').style.display = 'flex';
   $('btnStartCam').classList.remove('hidden'); $('btnStartCam').textContent = '▶ Open Camera';
   $('btnRec').classList.add('hidden'); $('btnStopRec').classList.add('hidden');
   $('btnRetakeVid').classList.add('hidden'); $('vidChosen').style.display = 'none';
@@ -914,12 +968,12 @@ $('vidFile').addEventListener('change', e => {
 ───────────────────────────────────────────────────── */
 $('btnAudioRec').addEventListener('click', async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
     S.stream = stream; S.chunks = [];
     S.recorder = new MediaRecorder(stream);
     S.recorder.ondataavailable = e => { if (e.data.size > 0) S.chunks.push(e.data); };
     S.recorder.onstop = () => {
-      S.audioBlob = new Blob(S.chunks, { type: 'audio/webm' });
+      S.audioBlob = new Blob(S.chunks, { type:'audio/webm' });
       revoke(S.audioURL); S.audioURL = URL.createObjectURL(S.audioBlob);
       $('audioPlayback').src = S.audioURL; $('audioPlayback').style.display = 'block';
       $('audioBars').classList.remove('live');
@@ -973,13 +1027,13 @@ $('textMsg').addEventListener('input', e => {
 /* ─────────────────────────────────────────────────────
    STEP NAVIGATION BUTTONS
 ───────────────────────────────────────────────────── */
-$('toStep1').addEventListener('click', () => showStep(1));
+$('toStep1').addEventListener('click',  () => showStep(1));
 $('toStep2b').addEventListener('click', () => showStep(2));
 $('toStep3b').addEventListener('click', () => showStep(4));
-$('toStep4').addEventListener('click', () => showStep(4));
+$('toStep4').addEventListener('click',  () => showStep(4));
 
 $('toStep3').addEventListener('click', () => {
-  const btn = $('toStep3');
+  const btn      = $('toStep3');
   const flashErr = msg => {
     const orig = btn.textContent;
     btn.style.background = '#fee2e2'; btn.style.color = 'var(--ruby)';
@@ -1015,13 +1069,13 @@ function buildPreview() {
 /* ─────────────────────────────────────────────────────
    ACTION TILE SELECTION
 ───────────────────────────────────────────────────── */
-const extraMap = { private: null, send: 'xSend', schedule: 'xSchedule', jic: 'xJic' };
+const extraMap = { private:null, send:'xSend', schedule:'xSchedule', jic:'xJic' };
 document.querySelectorAll('.action-tile').forEach(tile => {
   tile.addEventListener('click', () => {
     document.querySelectorAll('.action-tile').forEach(t => t.classList.remove('selected'));
     tile.classList.add('selected');
     S.action = tile.dataset.action;
-    ['xSend', 'xSchedule', 'xJic'].forEach(id => $(id).classList.remove('open'));
+    ['xSend','xSchedule','xJic'].forEach(id => $(id).classList.remove('open'));
     const ex = extraMap[S.action];
     if (ex) setTimeout(() => $(ex).classList.add('open'), 10);
     $('actionErr').style.display = 'none';
@@ -1029,65 +1083,9 @@ document.querySelectorAll('.action-tile').forEach(tile => {
 });
 
 /* ─────────────────────────────────────────────────────
-   FIREBASE: UPLOAD FILE WITH PROGRESS BAR
-───────────────────────────────────────────────────── */
-function uploadToFirebase(blob) {
-  return new Promise((resolve, reject) => {
-    const name    = (blob.name || 'recording_' + Date.now() + '.webm').replace(/\s+/g, '_');
-    const path    = 'messages/' + Date.now() + '_' + name;
-    const fileRef = storageRef(storage, path);
-    const task    = uploadBytesResumable(fileRef, blob);
-
-    // Show progress bar
-    $('uploadProgress').style.display = 'block';
-
-    task.on('state_changed',
-      snap => {
-        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-        $('uploadFill').style.width = pct + '%';
-        $('uploadPct').textContent  = pct + '%';
-        $('uploadLabel').textContent = pct < 100 ? 'Uploading to secure storage…' : 'Finalising…';
-      },
-      err => { $('uploadProgress').style.display = 'none'; reject(err); },
-      async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        $('uploadProgress').style.display = 'none';
-        resolve(url);
-      }
-    );
-  });
-}
-
-/* ─────────────────────────────────────────────────────
-   EMAILJS: SEND EMAIL
-   ─────────────────────────────────────────────────
-   Uses the global window.emailjs loaded above.
-   Gracefully skips if not yet configured.
-───────────────────────────────────────────────────── */
-async function sendEmail({ toEmail, messageType, fileURL, textContent, actionNote }) {
-  if (!window.emailjs) {
-    console.warn('EmailJS SDK not loaded — check CDN script tag.');
-    return;
-  }
-  if (EJS.serviceId === 'YOUR_SERVICE_ID') {
-    console.warn('EmailJS not configured yet — replace EJS values in the code.');
-    return;
-  }
-  window.emailjs.init({ publicKey: EJS.publicKey });
-  return window.emailjs.send(EJS.serviceId, EJS.templateId, {
-    to_email:     toEmail,
-    from_name:    'Capsule',
-    message_type: messageType.charAt(0).toUpperCase() + messageType.slice(1),
-    file_url:     fileURL      || '',
-    text_content: textContent  || '',
-    action_note:  actionNote   || ''
-  });
-}
-
-/* ─────────────────────────────────────────────────────
    SUBMIT HANDLER
-   Flow: validate → upload to Firebase Storage →
-         save to Firestore → send email (if needed)
+   Flow: validate → upload to Supabase Storage →
+         save row to Supabase DB → send email (if needed)
 ───────────────────────────────────────────────────── */
 $('btnSubmit').addEventListener('click', async () => {
   const errEl   = $('actionErr');
@@ -1102,9 +1100,9 @@ $('btnSubmit').addEventListener('click', async () => {
   if (S.action === 'schedule') {
     const e = $('schedEmail').value.trim();
     const d = $('schedDate').value;
-    if (!e || !e.includes('@')) return showErr('Please enter a valid recipient email address.');
-    if (!d)                      return showErr('Please choose a delivery date and time.');
-    if (new Date(d) <= new Date()) return showErr('Please choose a date and time in the future.');
+    if (!e || !e.includes('@'))     return showErr('Please enter a valid recipient email address.');
+    if (!d)                          return showErr('Please choose a delivery date and time.');
+    if (new Date(d) <= new Date())   return showErr('Please choose a future date and time.');
   }
   if (S.action === 'jic') {
     const e = $('jicE1').value.trim();
@@ -1117,55 +1115,51 @@ $('btnSubmit').addEventListener('click', async () => {
   $('toStep3b').disabled = true;
 
   try {
-    /* 1. Upload media to Firebase Storage */
+    /* 1. Upload media → Supabase Storage */
     let fileURL = null;
     const blob  = S.format === 'video' ? S.videoBlob
                 : S.format === 'audio' ? S.audioBlob : null;
-    if (blob) fileURL = await uploadToFirebase(blob);
+    if (blob) fileURL = await uploadToSupabase(blob);
 
     /* 2. Collect form values */
     const recipientEmail = S.action === 'send'     ? $('sendEmail').value.trim()
                          : S.action === 'schedule' ? $('schedEmail').value.trim()
                          : null;
-    const scheduledDate  = S.action === 'schedule' ? $('schedDate').value : null;
+    const scheduledFor   = S.action === 'schedule' ? $('schedDate').value : null;
+    const jicContact1    = S.action === 'jic' ? $('jicE1').value.trim()          : null;
+    const jicContact2    = S.action === 'jic' ? $('jicE2').value.trim() || null  : null;
+    const jicNote        = S.action === 'jic' ? $('jicNote').value.trim() || null : null;
 
-    /* 3. Save document to Firestore — collection: "messages" */
-    const docData = {
+    /* 3. Save record → Supabase DB */
+    await saveRecord({
       type:           S.format,
-      fileURL:        fileURL,
+      fileURL,
       textContent:    S.format === 'text' ? S.text : null,
       action:         S.action,
-      recipientEmail: recipientEmail,
-      scheduledDate:  scheduledDate ? Timestamp.fromDate(new Date(scheduledDate)) : null,
-      jicContacts:    S.action === 'jic' ? {
-        contact1: $('jicE1').value.trim(),
-        contact2: $('jicE2').value.trim() || null,
-        note:     $('jicNote').value.trim() || null
-      } : null,
-      createdAt:      Timestamp.now()
-    };
-    const docRef = await addDoc(collection(db, 'messages'), docData);
-    console.log('✅ Saved to Firestore — ID:', docRef.id);
+      recipientEmail,
+      scheduledFor,
+      jicContact1, jicContact2, jicNote
+    });
+    console.log('✅ Saved to Supabase');
 
-    /* 4. Send email immediately (Send now action only) */
+    /* 4. Send email (Send now only) */
     if (S.action === 'send') {
       try {
         await sendEmail({
           toEmail:     recipientEmail,
           messageType: S.format,
-          fileURL:     fileURL,
+          fileURL,
           textContent: S.text,
           actionNote:  'You have received a message via Capsule.'
         });
         console.log('✅ Email sent via EmailJS');
       } catch (emailErr) {
-        // Email failure is non-fatal — data is already saved
         console.warn('Email send failed (non-fatal):', emailErr);
       }
     }
 
-    /* 5. Show success screen */
-    showSuccess(recipientEmail, scheduledDate);
+    /* 5. Show success */
+    showSuccess(recipientEmail, scheduledFor);
 
   } catch (err) {
     console.error('Submit error:', err);
@@ -1179,7 +1173,7 @@ $('btnSubmit').addEventListener('click', async () => {
 /* ─────────────────────────────────────────────────────
    SUCCESS SCREEN
 ───────────────────────────────────────────────────── */
-function showSuccess(recipientEmail, scheduledDate) {
+function showSuccess(recipientEmail, scheduledFor) {
   const titleMap = {
     private:  'Your message has been saved.',
     send:     'Your message is on its way!',
@@ -1187,7 +1181,7 @@ function showSuccess(recipientEmail, scheduledDate) {
     jic:      'Saved. Trusted contacts are set.'
   };
   const subMap = {
-    private:  'Saved privately in your vault. Only you can access it.',
+    private:  'Saved privately. Only you can access it.',
     send:     'The recipient will receive it in their inbox shortly.',
     schedule: 'It will be delivered automatically at the chosen time.',
     jic:      'Your trusted contacts will receive it only if the moment comes.'
@@ -1195,7 +1189,7 @@ function showSuccess(recipientEmail, scheduledDate) {
   const chipMap = {
     private:  '🔒 Saved privately',
     send:     '📩 Sent → ' + (recipientEmail || 'recipient'),
-    schedule: '⏳ Scheduled → ' + fmtDate(scheduledDate),
+    schedule: '⏳ Scheduled → ' + fmtDate(scheduledFor),
     jic:      '🛟 Just-in-case delivery enabled'
   };
   $('successTitle').textContent = titleMap[S.action];
@@ -1207,8 +1201,8 @@ function showSuccess(recipientEmail, scheduledDate) {
 
 function fmtDate(val) {
   try {
-    const v = val || $('schedDate').value;
-    return new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return new Date(val || $('schedDate').value)
+      .toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   } catch (e) { return 'the scheduled time'; }
 }
 
@@ -1220,9 +1214,9 @@ $('btnDone').addEventListener('click', () => { resetState(); showStep(1); });
 function resetState() {
   revoke(S.videoURL); revoke(S.audioURL);
   Object.assign(S, {
-    step: 1, format: 'video', action: 'private',
-    videoBlob: null, videoURL: null, audioBlob: null, audioURL: null, text: '',
-    stream: null, recorder: null, chunks: [], recording: false, audioSec: 0
+    step:1, format:'video', action:'private',
+    videoBlob:null, videoURL:null, audioBlob:null, audioURL:null, text:'',
+    stream:null, recorder:null, chunks:[], recording:false, audioSec:0
   });
   clearInterval(S.audioInterval);
   document.querySelectorAll('.fmt-card').forEach(c => c.classList.remove('selected'));
@@ -1241,7 +1235,7 @@ function resetState() {
   $('textMsg').value = ''; $('charCount').textContent = '0';
   document.querySelectorAll('.action-tile').forEach(t => t.classList.remove('selected'));
   document.querySelector('[data-action="private"]').classList.add('selected');
-  ['xSend', 'xSchedule', 'xJic'].forEach(id => $(id).classList.remove('open'));
+  ['xSend','xSchedule','xJic'].forEach(id => $(id).classList.remove('open'));
   $('actionErr').style.display = 'none';
   $('uploadProgress').style.display = 'none';
   $('uploadFill').style.width = '0%';
@@ -1256,7 +1250,7 @@ function resetState() {
 function stopStream() { if (S.stream) { S.stream.getTracks().forEach(t => t.stop()); S.stream = null; } }
 function stopAllMedia() {
   stopStream();
-  if (S.recording && S.recorder) { try { S.recorder.stop(); } catch (e) {} S.recording = false; }
+  if (S.recording && S.recorder) { try { S.recorder.stop(); } catch(e){} S.recording = false; }
   clearInterval(S.audioInterval);
 }
 
