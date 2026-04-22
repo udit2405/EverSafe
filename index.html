@@ -1388,8 +1388,38 @@ footer{
 <!-- ════════════════════════════════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════════════════════════════ -->
-<script>
+<script type="module">
+   
 /* ── Helpers ─────────────────────────────────────────────────── */
+
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+  apiKey: "AIzaSyDYNcJ6uWItO6W7m9TVfQibYtynCQaeA1A",
+  authDomain: "capsule-24.firebaseapp.com",
+  projectId: "capsule-24",
+  storageBucket: "capsule-24.appspot.com"
+  messagingSenderId: "954712376887",
+  appId: "1:954712376887:web:1c3d1a4b6d1efeb29821b2",
+  measurementId: "G-YRD2JQDZV6"
+};
+   async function uploadFile(file) {
+  const fileRef = ref(storage, "messages/" + Date.now() + "_" + file.name);
+  await uploadBytes(fileRef, file);
+  const url = await getDownloadURL(fileRef);
+  return url;
+}
+   async function saveMessage(data) {
+  await addDoc(collection(db, "messages"), data);
+}
+   
+
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
+const db = getFirestore(app);
+   
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2,'0');
 const fmtTime = s => `${pad(Math.floor(s/60))}:${pad(s%60)}`;
@@ -1674,28 +1704,39 @@ document.querySelectorAll('.action-tile').forEach(tile => {
 });
 
 /* ── Submit ──────────────────────────────────────────────────── */
-$('btnSubmit').addEventListener('click', () => {
+$('btnSubmit').addEventListener('click', async () => {
+
   const err = $('actionErr');
   err.style.display = 'none';
-  const showErr = msg => { err.textContent = '⚠ ' + msg; err.style.display = 'block'; };
 
-  if(S.action === 'send'){
-    const e = $('sendEmail').value.trim();
-    if(!e || !e.includes('@')) return showErr('Please enter a valid recipient email address.');
-  }
-  if(S.action === 'schedule'){
-    const e = $('schedEmail').value.trim();
-    const d = $('schedDate').value;
-    if(!e || !e.includes('@')) return showErr('Please enter a valid recipient email address.');
-    if(!d) return showErr('Please choose a delivery date and time.');
-    if(new Date(d) <= new Date()) return showErr('Please choose a date in the future.');
-  }
-  if(S.action === 'jic'){
-    const e = $('jicE1').value.trim();
-    if(!e || !e.includes('@')) return showErr('Please enter at least one trusted contact email.');
-  }
+  try {
+    let fileURL = null;
 
-  showSuccess();
+    // Upload file if exists
+    if (S.format === "video" && S.videoBlob) {
+      fileURL = await uploadFile(S.videoBlob);
+    }
+
+    if (S.format === "audio" && S.audioBlob) {
+      fileURL = await uploadFile(S.audioBlob);
+    }
+
+    // Save to Firestore
+    await saveMessage({
+      type: S.format,
+      fileURL: fileURL,
+      text: S.text || null,
+      action: S.action,
+      createdAt: new Date()
+    });
+
+    showSuccess();
+
+  } catch (e) {
+    console.error(e);
+    err.textContent = "⚠ Upload failed. Try again.";
+    err.style.display = 'block';
+  }
 });
 
 function showSuccess(){
