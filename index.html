@@ -716,7 +716,7 @@ footer{padding:40px;border-top:1px solid var(--divider)}
    ① SUPABASE — paste your Project URL on the next line
    supabase.com → your project → Settings → API → Project URL
 ───────────────────────────────────────────────────── */
-const SUPABASE_URL = 'https://ftmtbklxjpgxtbsoafvs.supabase.co/rest/v1/'; // ← REPLACE THIS
+const SUPABASE_URL = 'https://ftmtbklxjpgxtbsoafvs.supabase.co'; // ← REPLACE THIS
 const SUPABASE_KEY = 'sb_publishable_yxYC_3ZYThl7FgTz2oiKwA_qRuq5rbF';
 const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -727,9 +727,9 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
    {{message_type}}, {{file_url}}, {{text_content}}, {{action_note}})
 ───────────────────────────────────────────────────── */
 const EJS = {
-  serviceId:  'YOUR_SERVICE_ID',
-  templateId: 'YOUR_TEMPLATE_ID',
-  publicKey:  'YOUR_PUBLIC_KEY'
+  serviceId:  'service_wkmujop',
+  templateId: 'template_6lr33sf',
+  publicKey:  'YOUR_PUBLIC_KEY' // ← replace this
 };
 
 /* ─────────────────────────────────────────────────────
@@ -834,8 +834,8 @@ async function sendEmail({ toEmail, messageType, fileURL, textContent, actionNot
   if (EJS.serviceId === 'YOUR_SERVICE_ID') { console.warn('EmailJS not configured — skipping.'); return; }
   window.emailjs.init({ publicKey: EJS.publicKey });
   return window.emailjs.send(EJS.serviceId, EJS.templateId, {
-    to_email:     toEmail,
-    from_name:    'Capsule',
+    to_email: toEmail,
+    from_name:    "Capsule",
     message_type: messageType.charAt(0).toUpperCase() + messageType.slice(1),
     file_url:     fileURL      || '',
     text_content: textContent  || '',
